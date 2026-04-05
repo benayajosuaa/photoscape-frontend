@@ -13,12 +13,12 @@ export default function Home() {
   return (
     <div className={`${monserratFont.className}`}> 
        <div>
-            <div>
+            <div className="fixed top-0 w-full">
                 <NavigationBar />
             </div>
             <div className="p-10">
                 {/* judul */}
-                <div className="flex flex-col gap-y-6">
+                <div className="flex flex-col gap-y-6 pt-24">
                     <span className="font-bold font-[#0B1957] text-4xl">Gallery</span>
                     <span className="font-[#515151] text-xl font-light">Jelajahi setiap hasil foto kami, karena setiap frame <br/> menyimpan cerita yang berharga.</span>
                 </div>
@@ -57,7 +57,7 @@ export default function Home() {
 
 
                 {/* ending session */}
-                <div className="flex flex-col mt-50 mb-30 justify-center items-center gap-y-7">
+                <div className="flex flex-col mt-50 mb-30 justify-center items-center gap-y-10">
                     <div>
                         <span className="font-[#0B1957] text-3xl font-extrabold">Pesan Sekarang!</span>
                     </div>
