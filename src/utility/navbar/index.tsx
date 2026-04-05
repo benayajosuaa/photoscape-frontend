@@ -19,11 +19,12 @@ export default function NavigationBar() {
                 <img className="h-10 w-auto" src="/logo/logo1.png" alt="" />
             </div>
             <div className="flex flex-row gap-20">
-                <span>Home</span>
-                <span>Pricing</span>
-                <span>Gallery</span>
-                <span>Booking</span>
-                <span>Contact Us</span>
+                <span><Link href="/">Home</Link></span>
+                <span><Link href="">Pricing</Link></span>
+                <span><Link href="/gallery">Gallery</Link></span>
+                <span><Link href="">Booking</Link></span>
+                <span><Link href="">Contact Us</Link></span>
+                
             </div>
             <div>
                 <span className="bg-[#FA9EBC] text-[#0B1957] p-2 pl-6 pr-6 font-semibold rounded-xl">Login</span>
