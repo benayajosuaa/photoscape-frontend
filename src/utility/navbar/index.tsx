@@ -20,7 +20,7 @@ export default function NavigationBar() {
             </div>
             <div className="flex flex-row gap-20">
                 <span><Link href="/">Home</Link></span>
-                <span><Link href="">Pricing</Link></span>
+                <span><Link href="/pricing">Pricing</Link></span>
                 <span><Link href="/gallery">Gallery</Link></span>
                 <span><Link href="">Booking</Link></span>
                 <span><Link href="">Contact Us</Link></span>

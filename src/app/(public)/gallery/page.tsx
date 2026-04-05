@@ -54,8 +54,6 @@ export default function Home() {
                 </div>            
 
 
-
-
                 {/* ending session */}
                 <div className="flex flex-col mt-50 mb-30 justify-center items-center gap-y-10">
                     <div>
@@ -76,7 +74,7 @@ export default function Home() {
                         </div>
                         {/* lihat harga */}
                         <div className="bg-[#FA9EBC59] pt-4 pb-4 pr-10 pl-10 rounded-2xl">
-                            <Link href=""> Lihat daftar Harga</Link>
+                            <Link href="/pricing"> Lihat daftar Harga</Link>
                         </div>
                     </div>
                 </div>

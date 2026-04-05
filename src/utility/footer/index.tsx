@@ -30,7 +30,7 @@ export default function NavigationBar() {
                     <div className="flex flex-col gap-y-1">
                         <span className="font-bold text-xl mb-3">Menu</span>
                         <span><Link href="/">Home</Link></span>
-                        <span><Link href="">Pricing</Link></span>
+                        <span><Link href="/pricing">Pricing</Link></span>
                         <span><Link href="/gallery">Gallery</Link></span>
                         <span><Link href="">Booking</Link></span>
                     </div>
