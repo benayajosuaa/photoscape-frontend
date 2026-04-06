@@ -23,7 +23,7 @@ export default function NavigationBar() {
                 <span><Link href="/pricing">Pricing</Link></span>
                 <span><Link href="/gallery">Gallery</Link></span>
                 <span><Link href="">Booking</Link></span>
-                <span><Link href="">Contact Us</Link></span>
+                <span><Link href="/contact-us">Contact Us</Link></span>
                 
             </div>
             <div>
