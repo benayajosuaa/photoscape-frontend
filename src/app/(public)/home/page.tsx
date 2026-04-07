@@ -9,7 +9,7 @@ const monserratFont = Montserrat({
 
 export default function Home() {
   return (
-    <div className={`${monserratFont.className}`}> 
+    <div className={`${monserratFont.className} bg-white text-gray-900`}> 
         <div>
             {/* SECTION 1 */}
             <div className="h-screen bg-green-100 relative">
@@ -21,8 +21,8 @@ export default function Home() {
                 
                 <div className="absolute z-30 inset-0 flex items-center justify-center">
                     <div className="flex flex-col">
-                        <div className="text-white p-30 flex flex-col items-center justify-center gap-y-5">
-                            <span className="text-5xl text-center font-bold">Satu Studio, Beragam Cara Mengabadikan Ceritamu</span>
+                        <div className="text-white p-30 flex flex-col items-center justify-center gap-y-6">
+                            <span className="text-7xl text-center font-bold">Satu Studio, Beragam Cara Mengabadikan Ceritamu</span>
                             <span className="flex text-2xl text-center font-light">Abadikan setiap momen berharga Anda bersama kami—mulai dari foto keluarga profesional, sesi self-photo studio yang privat, hingga pengalaman photo box yang seru dan penuh gaya.</span>
                         </div>
                     </div>

@@ -11,7 +11,7 @@ const monserratFont = Montserrat({
 
 export default function Home() {
   return (
-    <div className={`${monserratFont.className}`}> 
+    <div className={`${monserratFont.className} bg-white text-gray-900`}> 
        <div>
             <div className="fixed top-0 w-full">
                 <NavigationBar />

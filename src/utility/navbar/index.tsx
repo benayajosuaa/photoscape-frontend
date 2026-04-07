@@ -1,9 +1,6 @@
 "use client"
-import { useState } from "react"
-import { IoMenu, IoClose } from "react-icons/io5"
-import { Montserrat } from "next/font/google"
-import { usePathname } from "next/navigation"
 import Link from "next/link"
+import { Montserrat } from "next/font/google"
 
 const monserratFont = Montserrat({
   subsets: ["latin"],

@@ -25,7 +25,7 @@ const monserratFont = Montserrat({
 export default function Home() {
   
   return (
-    <div className={monserratFont.className}>
+    <div className={`${monserratFont.className} bg-white text-gray-900`}>
       
         {/* NAVBAR */}
         <div className="fixed top-0 w-full z-50">
@@ -47,8 +47,8 @@ export default function Home() {
                 <div>
                   <div className="h-130 w-180 bg-amber-100">
                     {/* <img src="" alt="" /> */}
-                    1
-                  </div>
+                    isi disini gambarnya wok
+                  </div>  
                 </div>
                 <div className="w-150 text-left">
                   <div className="flex flex-col gap-y-20">
