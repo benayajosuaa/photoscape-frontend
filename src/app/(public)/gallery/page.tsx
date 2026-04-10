@@ -69,7 +69,7 @@ export default function Home() {
                         <div className="bg-[#FA9EBC] pt-4 pb-4 pr-10 pl-10 rounded-2xl">
                             <div className="flex items-center justify-center gap-x-3">
                                 <span className="font-extrabold"><SlCalender /></span>
-                                <span><Link href=""> Booking Jadwal</Link></span>
+                                <span><Link href="/booking/book"> Booking Jadwal</Link></span>
                             </div>
                         </div>
                         {/* lihat harga */}
