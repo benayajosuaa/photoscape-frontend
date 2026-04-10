@@ -34,13 +34,14 @@ export default function Home() {
       { title: "FAMILY DELUXE", price: "400.000", pax: "Max 8 orang", duration: "Sesi foto 45 menit", product:"4 Cetak foto 8R", paket:"/pricing/detail/famdeluxe" },
       { title: "FAMILY PREMIUM", price: "630.000", pax: "Max 10 orang", duration: "Sesi foto 45 menit", product:"6 Cetak foto 8R", paket:"/pricing/detail/fampremium" },
     ],
-    photobox: [
-      { title: "BOX BASIC", price: "100.000", pax: "3 foto", duration: "Sesi foto 45 menit", product:"2 Cetak foto 8R", paket:"/pricing/detail/boxbasic" },
-      { title: "BOX PREMIUM", price: "150.000", pax: "6 foto", duration: "Sesi foto 45 menit", product:"2 Cetak foto 8R", paket:"/pricing/detail/boxprem" },
-    ],
     selfphoto: [
       { title: "SELF BASIC", price: "80.000", pax: "30 menit", duration: "Sesi foto 45 menit", product:"2 Cetak foto 8R", paket:"/pricing/detail/selfbasic" },
+      { title: "SELF BASIC", price: "80.000", pax: "30 menit", duration: "Sesi foto 45 menit", product:"2 Cetak foto 8R", paket:"/pricing/detail/selfbasic" },
     ],
+    photobox: [
+      { title: "BOX PREMIUM", price: "150.000", pax: "6 foto", duration: "Sesi foto 45 menit", product:"2 Cetak foto 8R", paket:"/pricing/detail/boxprem" },
+    ],
+    
   }
 
   return (
@@ -76,18 +77,6 @@ export default function Home() {
           >
             Photo Studio
           </button>
-
-          <button
-            onClick={() => setActiveTab("photobox")}
-            className={`pb-2 transition-all ${
-              activeTab === "photobox"
-                ? "border-b-2 border-[#FA9EBC] font-semibold text-black"
-                : "text-gray-400"
-            }`}
-          >
-            Photo Box
-          </button>
-
           <button
             onClick={() => setActiveTab("selfphoto")}
             className={`pb-2 transition-all ${
@@ -97,6 +86,16 @@ export default function Home() {
             }`}
           >
             Self Photo Studio
+          </button>
+          <button
+            onClick={() => setActiveTab("photobox")}
+            className={`pb-2 transition-all ${
+              activeTab === "photobox"
+                ? "border-b-2 border-[#FA9EBC] font-semibold text-black"
+                : "text-gray-400"
+            }`}
+          >
+            Photo Box
           </button>
         </div>
 
