@@ -64,7 +64,7 @@ export default function Home() {
                         </span>
                         <span className="flex flex-row gap-x-4 text-[#0B1957]">
                           <span className="flex items-end font-bold text-xl text-[#515151]">Rp </span>
-                          <span className="text-4xl">4xx.xxx</span>
+                          <span className="text-4xl">40.000</span>
                         </span>
                       </div>
                     </div>
