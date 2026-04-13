@@ -55,27 +55,28 @@ export default function Home() {
                     <div>
                       <div className="flex flex-col gap-y-6">
                         <span className="text-[#0B1957] text-4xl">
-                          <h1 className="font-bold mb-8">Self Basic</h1>
+                          <h1 className="font-bold mb-8">Group Deluxe</h1>
                         </span>
                         <span>
                           <p className="text-xl font-thin">
-                            Pengalaman foto keluarga yang lebih spesial dengan layanan lebih lengkap untuk menghasilkan potret yang elegan dan berkesan.
+                            Paket self-photo terbaik untuk grup yang lebih besar dengan durasi sesi lebih panjang dan hasil foto yang lebih lengkap
                           </p>
                         </span>
                         <span className="flex flex-row gap-x-4 text-[#0B1957]">
                           <span className="flex items-end font-bold text-xl text-[#515151]">Rp </span>
-                          <span className="text-4xl">4xx.xxx</span>
+                          <span className="text-4xl">200.000</span>
                         </span>
                       </div>
                     </div>
                     <div className="text-[#515151]">
                       <span className="text-2xl">Apa yang didapatkan :</span>
                       <span className="flex flex-col relative left-6 text-lg mt-3">
-                        <li>halo</li>
-                        <li>halo</li>
-                        <li>halo</li>
-                        <li>halo</li>
-                        <li>halo</li>
+                        <li>Menggunakan Self-Photo Studio</li>
+                        <li>Menggunakan remote control</li>
+                        <li>Semua file foto (softcopy)</li>
+                        <li>5 foto fisik</li>
+                        <li>Maksimal 3 background</li>
+                        <li>Aksesoris studio tersedia</li>
                       </span>
                     </div>
                   </div>
