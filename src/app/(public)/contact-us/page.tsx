@@ -24,7 +24,6 @@ export default function Home() {
                         <span className="text-[#515151]">Butuh informasi lebih lanjut? <br/> Jangan ragu untuk menghubungi kami. <br/> Tim kami siap membantu Anda.</span>
                     
                     </div>
-                    <div>2</div>
                 </div>
                 <div className="flex flex-col gap-y-2 justify-start w-150">
                     <div>
