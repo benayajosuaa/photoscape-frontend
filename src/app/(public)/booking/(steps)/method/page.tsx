@@ -90,7 +90,7 @@ export default function Home() {
               <div className="w-7 h-2 bg-[#FA9EBC] rounded-full" />
               <div className="w-7 h-2 bg-[#FA9EBC] rounded-full" />
               <div className="w-7 h-2 bg-[#FA9EBC] rounded-full" />
-              <div className="w-7 h-2 bg-[#FA9EBC] rounded-full" />
+              <div className="w-7 h-2 bg-gray-300 rounded-full" />
             </div>
           </div>
 
