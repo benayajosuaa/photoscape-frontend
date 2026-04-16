@@ -85,6 +85,8 @@ export default function PackagePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isHydrated, setIsHydrated] = useState(false);
+  const incomingCustomerName = searchParams.get("customerName") || "";
+  const incomingCustomerPhone = searchParams.get("customerPhone") || "";
 
   const [activeTab, setActiveTab] = useState<PackageType>("studio");
   const [selectedLocationId, setSelectedLocationId] = useState("");
@@ -265,6 +267,8 @@ export default function PackagePage() {
       ...(selectedLocation ? { city: selectedLocation.name } : {}),
       packageId: selectedPackage.id,
       studioType: selectedStudioType,
+      ...(incomingCustomerName ? { customerName: incomingCustomerName } : {}),
+      ...(incomingCustomerPhone ? { customerPhone: incomingCustomerPhone } : {}),
       ...(addOnsQuery ? { addOns: addOnsQuery } : {}),
     });
 
@@ -417,7 +421,15 @@ export default function PackagePage() {
 
             <div className="flex flex-row items-center justify-between mb-30 mt-10">
               <button
-                onClick={() => router.push(`/booking/book`)}
+                onClick={() => {
+                  const params = new URLSearchParams({
+                    ...(selectedLocation ? { city: selectedLocation.name } : {}),
+                    ...(selectedLocationId ? { locationId: selectedLocationId } : {}),
+                    ...(incomingCustomerName ? { customerName: incomingCustomerName } : {}),
+                    ...(incomingCustomerPhone ? { customerPhone: incomingCustomerPhone } : {}),
+                  });
+                  router.push(`/booking/book${params.toString() ? `?${params.toString()}` : ""}`);
+                }}
                 className="flex flex-row items-center gap-x-2 text-xl p-2 border-2 border-[#FA9EBC] rounded-xl pl-6 pr-6"
               >
                 <span>

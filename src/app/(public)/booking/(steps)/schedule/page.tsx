@@ -126,6 +126,8 @@ export default function SchedulePage() {
   const searchParams = useSearchParams();
   const incomingCity = searchParams.get("city") || "";
   const incomingAddOns = searchParams.get("addOns") || "";
+  const incomingCustomerName = searchParams.get("customerName") || "";
+  const incomingCustomerPhone = searchParams.get("customerPhone") || "";
 
   const [metaLoading, setMetaLoading] = useState(true);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
@@ -155,8 +157,6 @@ export default function SchedulePage() {
     const matching = studios.find(studio => studio.type === selectedStudioType);
     return matching?.name ?? "Studio";
   }, [selectedSlot, studios, selectedStudioType]);
-
-  const availableSlots = useMemo(() => slots.filter(slot => slot.status === "available"), [slots]);
 
   const calendarCells = useMemo(() => buildCalendarCells(monthCursor), [monthCursor]);
 
@@ -345,6 +345,8 @@ export default function SchedulePage() {
       date: toDateOnlyString(selectedDate),
       startTime: selectedSlot.startTime,
       endTime: selectedSlot.endTime,
+      ...(incomingCustomerName ? { customerName: incomingCustomerName } : {}),
+      ...(incomingCustomerPhone ? { customerPhone: incomingCustomerPhone } : {}),
       ...(incomingAddOns ? { addOns: incomingAddOns } : {}),
     });
 
@@ -478,21 +480,29 @@ export default function SchedulePage() {
                   <div className="col-span-5 rounded-xl bg-white px-4 py-5 text-center text-[20px] text-[#666]">
                     Memuat slot waktu...
                   </div>
-                ) : availableSlots.length === 0 ? (
+                ) : slots.length === 0 ? (
                   <div className="col-span-5 rounded-xl bg-white px-4 py-5 text-center text-[20px] text-[#666]">
                     Tidak ada slot tersedia di tanggal ini
                   </div>
                 ) : (
-                  availableSlots.map(slot => {
+                  slots.map(slot => {
                     const isSelected = slot.scheduleId === selectedSlotId;
+                    const isBooked = slot.status !== "available";
 
                     return (
                       <button
                         key={slot.scheduleId}
                         type="button"
-                        onClick={() => setSelectedSlotId(slot.scheduleId)}
+                        onClick={() => {
+                          if (!isBooked) {
+                            setSelectedSlotId(slot.scheduleId);
+                          }
+                        }}
+                        disabled={isBooked}
                         className={`rounded-xl border-2 px-2 py-4 text-xl font-semibold transition ${
-                          isSelected
+                          isBooked
+                            ? "border-transparent bg-[#dfdfdf] text-[#050b29] cursor-not-allowed"
+                            : isSelected
                             ? "border-[#FA9EBC] bg-[#0B1957] text-white"
                             : "border-transparent bg-white hover:border-[#FA9EBC]"
                         }`}
@@ -515,6 +525,8 @@ export default function SchedulePage() {
                   ...(incomingCity ? { city: incomingCity } : {}),
                   packageId: selectedPackageId,
                   studioType: selectedStudioType,
+                  ...(incomingCustomerName ? { customerName: incomingCustomerName } : {}),
+                  ...(incomingCustomerPhone ? { customerPhone: incomingCustomerPhone } : {}),
                   ...(incomingAddOns ? { addOns: incomingAddOns } : {}),
                 });
                 router.push(`/booking/package?${params.toString()}`);
