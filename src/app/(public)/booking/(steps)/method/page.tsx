@@ -292,7 +292,7 @@ export default function MethodPage() {
         ...(summary?.package?.name ? { package: summary.package.name } : {}),
       });
 
-      router.push(`/booking/confirm%20?${nextParams.toString()}`);
+      router.push(`/booking/confirm?${nextParams.toString()}`);
     } catch (error: unknown) {
       const fallback = "Gagal membuat pembayaran";
       setMessage((error as { message?: string })?.message || fallback);
@@ -464,7 +464,7 @@ export default function MethodPage() {
                       </div>
 
                       {addOnText && (
-                        <div className="mt-5 bg-amber-600 flex items-center justify-between gap-4 text-3xl italic text-[#707070]">
+                        <div className="mt-5 flex items-center justify-between gap-4 text-2xl text-[#707070]">
                           <p>{addOnText}</p>
                           <p>{formatRupiah(summary.pricing.addOnTotal)}</p>
                         </div>

@@ -3,7 +3,7 @@ import Footer from "@/utility/footer";
 import NavigationBar from "@/utility/navbar";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Montserrat } from "next/font/google";
 
 const monserratFont = Montserrat({
@@ -25,11 +25,19 @@ type MetaResponse = {
 };
 
 export default function Home() {
+  const searchParams = useSearchParams();
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    setCustomerName(searchParams.get("customerName") || "");
+    setCustomerPhone(searchParams.get("customerPhone") || "");
+  }, [searchParams]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -51,6 +59,15 @@ export default function Home() {
 
         const fetchedLocations = json.data.locations ?? [];
         setLocations(fetchedLocations);
+
+        const queryLocationId = searchParams.get("locationId") || "";
+        const queryCity = searchParams.get("city") || "";
+        const byCity = fetchedLocations.find(
+          location => location.name.toLowerCase() === queryCity.toLowerCase()
+        );
+        const resolvedLocationId =
+          fetchedLocations.find(location => location.id === queryLocationId)?.id || byCity?.id || null;
+        setSelectedLocationId(resolvedLocationId);
       } catch (error: any) {
         if (error.name !== "AbortError") {
           setErrorMessage(error.message || "Gagal memuat lokasi");
@@ -63,12 +80,17 @@ export default function Home() {
     void loadLocations();
 
     return () => controller.abort();
-  }, []);
+  }, [searchParams]);
 
   const selectedLocation = useMemo(
     () => locations.find(location => location.id === selectedLocationId) ?? null,
     [locations, selectedLocationId]
   );
+
+  const canContinue =
+    Boolean(selectedLocationId) &&
+    customerName.trim().length >= 2 &&
+    customerPhone.trim().length >= 8;
 
   return (
     <div className={`${monserratFont.className} bg-white text-gray-900`}>
@@ -104,15 +126,19 @@ export default function Home() {
                   <input
                     type="text"
                     placeholder="Enter Name"
+                    value={customerName}
+                    onChange={event => setCustomerName(event.target.value)}
                     className="border-b p-2 border-gray-400 w-full focus:outline-none focus:border-blue-500 text-gray-600"
                   />
                 </div>
 
                 <div className="flex flex-col gap-y-2">
-                  <label className="text-xl font-semibold text-blue-900">Email</label>
+                  <label className="text-xl font-semibold text-blue-900">Phone</label>
                   <input
-                    type="email"
-                    placeholder="Enter Email"
+                    type="tel"
+                    placeholder="Enter Phone Number"
+                    value={customerPhone}
+                    onChange={event => setCustomerPhone(event.target.value)}
                     className="border-b p-2 border-gray-400 w-full focus:outline-none focus:border-blue-500 text-gray-600"
                   />
                 </div>
@@ -157,18 +183,20 @@ export default function Home() {
 
           <div className="flex justify-end">
             <button
-              disabled={!selectedLocationId}
+              disabled={!canContinue}
               onClick={() => {
                 if (selectedLocation) {
                   const query = new URLSearchParams({
                     locationId: selectedLocation.id,
                     city: selectedLocation.name,
+                    customerName: customerName.trim(),
+                    customerPhone: customerPhone.trim(),
                   });
                   router.push(`/booking/package?${query.toString()}`);
                 }
               }}
               className={`flex items-center gap-x-2 px-8 py-2 rounded-lg transition ${
-                selectedLocationId
+                canContinue
                   ? "bg-[#FA9EBC] text-[#0B1957] hover:opacity-90"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
