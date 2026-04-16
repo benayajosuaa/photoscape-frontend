@@ -1,6 +1,15 @@
 "use client"
 import Link from "next/link"
 import { Montserrat } from "next/font/google"
+import { useEffect, useState } from "react";
+import {
+  API_BASE_URL,
+  AuthUser,
+  clearLoginSession,
+  getFirstName,
+  getStoredToken,
+  getStoredUser,
+} from "@/lib/auth-client";
 
 const monserratFont = Montserrat({
   subsets: ["latin"],
@@ -8,6 +17,55 @@ const monserratFont = Montserrat({
 })
 
 export default function NavigationBar() {
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    const token = getStoredToken();
+    const cachedUser = getStoredUser();
+
+    if (!token) {
+      setUser(null);
+      return;
+    }
+
+    if (cachedUser) {
+      setUser(cachedUser);
+    }
+
+    const controller = new AbortController();
+
+    const fetchMe = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          signal: controller.signal,
+        });
+
+        const json = (await response.json()) as {
+          user?: AuthUser;
+          error?: string;
+        };
+
+        if (!response.ok || !json.user) {
+          clearLoginSession();
+          setUser(null);
+          return;
+        }
+
+        window.localStorage.setItem("authUser", JSON.stringify(json.user));
+        setUser(json.user);
+      } catch {
+        // Keep cached user if request fails, but do nothing.
+      }
+    };
+
+    void fetchMe();
+
+    return () => controller.abort();
+  }, []);
 
   return (
     <div className={`${monserratFont.className}`}>
@@ -24,7 +82,15 @@ export default function NavigationBar() {
                 
             </div>
             <div>
-                <span className="bg-[#FA9EBC] text-[#0B1957] p-2 pl-6 pr-6 font-semibold rounded-xl">Login</span>
+                {user ? (
+                  <span className="bg-[#FA9EBC] text-[#0B1957] p-2 pl-6 pr-6 font-semibold rounded-xl">
+                    {getFirstName(user.name)}
+                  </span>
+                ) : (
+                  <span className="bg-[#FA9EBC] text-[#0B1957] p-2 pl-6 pr-6 font-semibold rounded-xl">
+                    <Link href="/login">Login</Link>
+                  </span>
+                )}
             </div>
         </div>
     </div>
