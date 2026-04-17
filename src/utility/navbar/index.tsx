@@ -1,7 +1,8 @@
 "use client"
 import Link from "next/link"
 import { Montserrat } from "next/font/google"
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   API_BASE_URL,
   AuthUser,
@@ -17,7 +18,10 @@ const monserratFont = Montserrat({
 })
 
 export default function NavigationBar() {
+  const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const token = getStoredToken();
@@ -67,6 +71,41 @@ export default function NavigationBar() {
     return () => controller.abort();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    const token = getStoredToken();
+
+    try {
+      if (token) {
+        await fetch(`${API_BASE_URL}/api/auth/logout`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+    } catch {
+      // Ignore network/logout API errors and continue clearing client session.
+    } finally {
+      clearLoginSession();
+      setUser(null);
+      setMenuOpen(false);
+      router.push("/login");
+      router.refresh();
+    }
+  };
+
   return (
     <div className={`${monserratFont.className}`}>
         <div className="flex flex-row justify-between p-5 pl-10 pr-10 bg-[#0B1957] font-semibold text-lg text-[#FA9EBC] items-center">
@@ -81,11 +120,35 @@ export default function NavigationBar() {
                 <span><Link href="/contact-us">Contact Us</Link></span>
                 
             </div>
-            <div>
+            <div ref={menuRef} className="relative">
                 {user ? (
-                  <span className="bg-[#FA9EBC] text-[#0B1957] p-2 pl-6 pr-6 font-semibold rounded-xl">
-                    {getFirstName(user.name)}
-                  </span>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setMenuOpen(prev => !prev)}
+                      className="bg-[#FA9EBC] text-[#0B1957] p-2 pl-6 pr-6 font-semibold rounded-xl"
+                    >
+                      {getFirstName(user.name)}
+                    </button>
+                    {menuOpen && (
+                      <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-[#f3bfd3] bg-white shadow-lg">
+                        <Link
+                          href="/booking/history"
+                          className="block px-4 py-3 text-[16px] font-semibold text-[#0B1957] hover:bg-[#fdebf2]"
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          Riwayat Booking
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={handleLogout}
+                          className="block w-full px-4 py-3 text-left text-[16px] font-semibold text-[#B33362] hover:bg-[#fdebf2]"
+                        >
+                          Log Out
+                        </button>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <span className="bg-[#FA9EBC] text-[#0B1957] p-2 pl-6 pr-6 font-semibold rounded-xl">
                     <Link href="/login">Login</Link>

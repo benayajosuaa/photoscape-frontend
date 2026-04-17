@@ -29,10 +29,29 @@ export default function Home() {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    const token =
+      window.localStorage.getItem("authToken") ||
+      window.localStorage.getItem("token") ||
+      window.localStorage.getItem("accessToken") ||
+      "";
+
+    if (!token) {
+      const redirect = encodeURIComponent(`/booking/book${window.location.search || ""}`);
+      router.replace(`/login?redirect=${redirect}`);
+      return;
+    }
+
+    setIsAuthenticated(true);
+    setIsAuthChecked(true);
+  }, [router]);
 
   useEffect(() => {
     setCustomerName(searchParams.get("customerName") || "");
@@ -40,6 +59,10 @@ export default function Home() {
   }, [searchParams]);
 
   useEffect(() => {
+    if (!isAuthChecked || !isAuthenticated) {
+      return;
+    }
+
     const controller = new AbortController();
 
     const loadLocations = async () => {
@@ -80,7 +103,7 @@ export default function Home() {
     void loadLocations();
 
     return () => controller.abort();
-  }, [searchParams]);
+  }, [searchParams, isAuthChecked, isAuthenticated]);
 
   const selectedLocation = useMemo(
     () => locations.find(location => location.id === selectedLocationId) ?? null,
@@ -99,6 +122,9 @@ export default function Home() {
       </div>
 
       <div className="min-h-screen pt-32 px-20">
+        {!isAuthChecked ? (
+          <div className="py-20 text-center text-xl text-[#666]">Mengecek sesi login...</div>
+        ) : (
         <div className="flex flex-col gap-y-16">
           <div className="flex justify-center py-4">
             <span className="text-center text-xl text-[#515151]">
@@ -208,6 +234,7 @@ export default function Home() {
             </button>
           </div>
         </div>
+        )}
       </div>
 
       <div>

@@ -2,7 +2,7 @@
 
 import { Montserrat } from "next/font/google";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { API_BASE_URL, storeLoginSession } from "@/lib/auth-client";
 
@@ -29,6 +29,7 @@ type LoginResponse = {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -65,7 +66,8 @@ export default function LoginPage() {
       });
 
       setSuccessMessage("Login berhasil. Mengalihkan...");
-      router.push("/");
+      const redirect = searchParams.get("redirect");
+      router.push(redirect && redirect.startsWith("/") ? redirect : "/");
       router.refresh();
     } catch (error: any) {
       setErrorMessage(error.message || "Login gagal");

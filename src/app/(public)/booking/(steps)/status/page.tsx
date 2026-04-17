@@ -338,7 +338,7 @@ export default function StatusPage() {
           </p>
 
           {message && (
-            <div className="mx-auto mt-8 max-w-8 rounded-xl border border-[#FA9EBC] bg-[#fdebf2] px-5 py-4 text-[#B33362]">
+            <div className="mx-auto mt-8 flex w-full max-w-[680px] items-center justify-center rounded-xl border border-[#FA9EBC] bg-[#fdebf2] px-5 py-4 text-[18px] leading-relaxed text-[#B33362] break-words text-center">
               {message}
             </div>
           )}
