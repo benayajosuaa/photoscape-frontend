@@ -121,13 +121,13 @@ export default function Home() {
         <NavigationBar />
       </div>
 
-      <div className="min-h-screen pt-32 px-20">
+      <div className="min-h-screen px-4 pt-28 sm:px-8 lg:px-20 lg:pt-32">
         {!isAuthChecked ? (
           <div className="py-20 text-center text-xl text-[#666]">Mengecek sesi login...</div>
         ) : (
         <div className="flex flex-col gap-y-16">
-          <div className="flex justify-center py-4">
-            <span className="text-center text-xl text-[#515151]">
+          <div className="flex justify-center py-2 sm:py-4">
+            <span className="text-center text-base text-[#515151] sm:text-xl">
               Abadikan momen terbaik Anda hari ini. <br />
               Pesan sesi foto Anda sekarang!
             </span>
@@ -144,11 +144,11 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex w-full p-10">
-            <div className="w-1/2">
+          <div className="flex w-full flex-col gap-10 p-2 sm:p-6 lg:flex-row lg:p-10">
+            <div className="w-full lg:w-1/2">
               <div className="flex flex-col gap-y-10 max-w-md">
                 <div className="flex flex-col gap-y-2">
-                  <label className="text-xl font-semibold text-blue-900">Name</label>
+                  <label className="text-lg font-semibold text-blue-900 sm:text-xl">Name</label>
                   <input
                     type="text"
                     placeholder="Enter Name"
@@ -159,7 +159,7 @@ export default function Home() {
                 </div>
 
                 <div className="flex flex-col gap-y-2">
-                  <label className="text-xl font-semibold text-blue-900">Phone</label>
+                  <label className="text-lg font-semibold text-blue-900 sm:text-xl">Phone</label>
                   <input
                     type="tel"
                     placeholder="Enter Phone Number"
@@ -171,9 +171,9 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="w-1/2">
+            <div className="w-full lg:w-1/2">
               <div className="flex flex-col gap-y-8">
-                <h1 className="text-3xl font-bold">Pilih Lokasi</h1>
+                <h1 className="text-2xl font-bold sm:text-3xl">Pilih Lokasi</h1>
 
                 {errorMessage && <p className="text-sm text-[#B33362]">{errorMessage}</p>}
 
@@ -207,7 +207,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-center lg:justify-end">
             <button
               disabled={!canContinue}
               onClick={() => {

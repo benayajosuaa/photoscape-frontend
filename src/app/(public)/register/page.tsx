@@ -99,16 +99,16 @@ export default function RegisterPage() {
 
   return (
     <div className={`${monserratFont.className}`}>
-      <div className="h-screen w-auto bg-[#F8C6D673]">
-        <div className="flex h-screen items-center justify-center">
-          <div className="flex flex-col items-center gap-y-6">
+      <div className="min-h-screen w-auto bg-[#F8C6D673] px-4 py-8">
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="flex w-full max-w-[520px] flex-col items-center gap-y-6">
             <div>
               <h1 className="text-3xl font-bold font-[#0B1957]">daftar yuk</h1>
             </div>
 
             {(errorMessage || successMessage) && (
               <div
-                className={`w-120 rounded-xl border px-5 py-3 text-sm ${
+                className={`w-full rounded-xl border px-5 py-3 text-sm ${
                   errorMessage
                     ? "border-[#FA9EBC] bg-[#fdebf2] text-[#B33362]"
                     : "border-[#b8e7d0] bg-[#edf9f2] text-[#25734c]"
@@ -119,7 +119,7 @@ export default function RegisterPage() {
             )}
 
             {!otpStep ? (
-              <form onSubmit={handleRegister} className="w-120 rounded-3xl border bg-white p-10">
+              <form onSubmit={handleRegister} className="w-full rounded-3xl border bg-white p-6 sm:p-10">
                 <div className="flex flex-col gap-y-8">
                   <span className="flex flex-col gap-y-2">
                     <label htmlFor="name">Nama</label>
@@ -172,7 +172,7 @@ export default function RegisterPage() {
                 </div>
               </form>
             ) : (
-              <form onSubmit={handleVerifyOtp} className="w-120 rounded-3xl border bg-white p-10">
+              <form onSubmit={handleVerifyOtp} className="w-full rounded-3xl border bg-white p-6 sm:p-10">
                 <div className="flex flex-col gap-y-8">
                   <span className="flex flex-col gap-y-2">
                     <label htmlFor="otp">Kode OTP</label>

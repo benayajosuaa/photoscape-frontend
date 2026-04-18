@@ -3,7 +3,7 @@
 import NavigationBar from "../../utility/navbar/index"
 import Footer from "../../utility/footer"
 import { Montserrat } from "next/font/google"
-import { useState } from "react" 
+import { useState } from "react"
 import { RiGroup3Fill } from "react-icons/ri";
 import { RiTimerLine } from "react-icons/ri";
 import { HiOutlinePhoto } from "react-icons/hi2";
@@ -30,46 +30,46 @@ export default function Home() {
 
   const packages: Record<PackageCategory, PackageItem[]> = {
     studio: [
-      { title: "FAMILY LITE", price: "220.000", pax: "Max 5 orang", duration: "Sesi foto 45 menit", product:"2 Cetak foto 6R", paket:"/pricing/detail/famlite"},
-      { title: "FAMILY DELUXE", price: "400.000", pax: "Max 8 orang", duration: "Sesi foto 1 jam", product:"4 Cetak foto 8R", paket:"/pricing/detail/famdeluxe" },
-      { title: "FAMILY PREMIUM", price: "630.000", pax: "Max 10 orang", duration: "Sesi foto 1 jam", product:"6 Cetak foto 8R", paket:"/pricing/detail/fampremium" },
+      { title: "FAMILY LITE", price: "220.000", pax: "Max 5 orang", duration: "Sesi foto 45 menit", product: "2 Cetak foto 6R", paket: "/pricing/detail/famlite" },
+      { title: "FAMILY DELUXE", price: "400.000", pax: "Max 8 orang", duration: "Sesi foto 1 jam", product: "4 Cetak foto 8R", paket: "/pricing/detail/famdeluxe" },
+      { title: "FAMILY PREMIUM", price: "630.000", pax: "Max 10 orang", duration: "Sesi foto 1 jam", product: "6 Cetak foto 8R", paket: "/pricing/detail/fampremium" },
     ],
     selfphoto: [
-      { title: "GROUP LITE", price: "120.000", pax: "Max 6 orang", duration: "Sesi foto 45 menit", product:"3 foto fisik", paket:"/pricing/detail/group-lite" },
-      { title: "GROUP DELUXE", price: "200.000", pax: "Max 10 orang", duration: "Sesi foto 1 jam", product:"5 foto fisik", paket:"/pricing/detail/group-deluxe" },
+      { title: "GROUP LITE", price: "120.000", pax: "Max 6 orang", duration: "Sesi foto 45 menit", product: "3 foto fisik", paket: "/pricing/detail/group-lite" },
+      { title: "GROUP DELUXE", price: "200.000", pax: "Max 10 orang", duration: "Sesi foto 1 jam", product: "5 foto fisik", paket: "/pricing/detail/group-deluxe" },
     ],
     photobox: [
-      { title: "PHOTO BOX MOMENTS", price: "40.000", pax: "4 foto", duration: "Sesi foto 10 menit", product:"2 Cetak Foto Strip", paket:"/pricing/detail/photobox" },
+      { title: "PHOTO BOX MOMENTS", price: "40.000", pax: "4 foto", duration: "Sesi foto 10 menit", product: "2 Cetak Foto Strip", paket: "/pricing/detail/photobox" },
     ],
-    
+
   }
 
   return (
     <div className={`${monserratFont.className} bg-white text-gray-900`}>
-      
+
       {/* NAVBAR */}
-      <div className="fixed top-0 w-full z-50">
+      <div className="fixed top-0 z-50 w-full">
         <NavigationBar />
       </div>
 
       {/* CONTENT */}
-      <div className="pt-32 p-15 bg-[#FA9EBC59] min-h-screen">
+      <div className="min-h-screen bg-[#FA9EBC59] px-4 pb-14 pt-24 sm:px-8 sm:pt-28 lg:p-15 lg:pt-32">
 
         {/* TITLE */}
-        <div className="flex flex-col gap-y-4 mb-10">
-          <span className="font-bold text-[#0B1957] text-4xl">
+        <div className="mb-8 flex flex-col gap-y-3 sm:mb-10 sm:gap-y-4">
+          <span className="text-3xl font-bold text-[#0B1957] sm:text-4xl">
             Daftar Harga Layanan
           </span>
-          <span className="text-[#515151] text-lg font-light">
+          <span className="text-base font-light text-[#515151] sm:text-lg">
             Pilih paket terbaik untuk momen berharga Anda.
           </span>
         </div>
 
         {/* TABS */}
-        <div className="flex gap-15 border-b mb-10 text-lg">
+        <div className="mb-8 flex gap-6 overflow-x-auto border-b pb-1 text-base sm:mb-10 sm:gap-10 sm:text-lg lg:gap-15">
           <button
             onClick={() => setActiveTab("studio")}
-            className={`pb-2 transition-all ${
+            className={`shrink-0 pb-2 transition-all ${
               activeTab === "studio"
                 ? "border-b-2 border-[#FA9EBC] font-semibold text-black"
                 : "text-gray-400"
@@ -79,7 +79,7 @@ export default function Home() {
           </button>
           <button
             onClick={() => setActiveTab("selfphoto")}
-            className={`pb-2 transition-all ${
+            className={`shrink-0 pb-2 transition-all ${
               activeTab === "selfphoto"
                 ? "border-b-2 border-[#FA9EBC] font-semibold text-black"
                 : "text-gray-400"
@@ -89,7 +89,7 @@ export default function Home() {
           </button>
           <button
             onClick={() => setActiveTab("photobox")}
-            className={`pb-2 transition-all ${
+            className={`shrink-0 pb-2 transition-all ${
               activeTab === "photobox"
                 ? "border-b-2 border-[#FA9EBC] font-semibold text-black"
                 : "text-gray-400"
@@ -100,43 +100,43 @@ export default function Home() {
         </div>
 
         {/* CARDS */}
-        <div className="flex gap-10 h-120 ">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:flex lg:gap-10 lg:h-[480px]">
           {packages[activeTab].map((item, index) => (
             <div
-                key={index}
-                className="bg-white p-6 rounded-3xl shadow-md hover:shadow-2xl transition-all duration-300 w-100 flex flex-col gap-y-5"
-                >
-                <h2 className="text-3xl text-[#0B1957] mb-2 font-extrabold">
-                    {item.title}
-                </h2>
+              key={index}
+              className="flex w-full flex-col gap-y-5 rounded-3xl bg-white p-5 shadow-md transition-all duration-300 hover:shadow-2xl sm:p-6 lg:w-[400px]"
+            >
+              <h2 className="mb-2 text-2xl font-extrabold text-[#0B1957] sm:text-3xl">
+                {item.title}
+              </h2>
 
-                <p className="text-2xl font-semibold mb-4 text-[#7d7d7d]"> 
-                    Rp <span className="text-4xl text-[#0B1957]">{item.price}</span> 
-                </p>
+              <p className="mb-3 text-xl font-semibold text-[#7d7d7d] sm:mb-4 sm:text-2xl">
+                Rp <span className="text-3xl text-[#0B1957] sm:text-4xl">{item.price}</span>
+              </p>
 
-                <div className="text-xl font-thin text-gray-500 mb-6 flex flex-col gap-y-4 mt-8">
-                    <div className="flex flex-row items-center gap-x-3">
-                      <span><RiGroup3Fill /></span>
-                      <span>{item.pax}</span>
-                    </div>
-
-                    <div className="flex flex-row items-center gap-x-3">
-                      <span><RiTimerLine /></span>
-                      <span>{item.duration}</span>
-                    </div>
-
-                    <div className="flex flex-row items-center gap-x-3">
-                      <span><HiOutlinePhoto /></span>
-                      <span>{item.product}</span>
-                    </div>
+              <div className="mt-2 mb-4 flex flex-col gap-y-3 text-base font-thin text-gray-500 sm:mb-6 sm:mt-4 sm:gap-y-4 sm:text-xl sm:font-normal">
+                <div className="flex flex-row items-center gap-x-3">
+                  <span><RiGroup3Fill /></span>
+                  <span>{item.pax}</span>
                 </div>
 
-                <Link
-                  href={item.paket}
-                  className="mt-auto w-full border-2 border-[#0B1957] text-[#0B1957] py-2 rounded-xl hover:bg-[#0B1957] hover:text-white transition-all text-center"
-                >
-                  Detail Paket
-                </Link>
+                <div className="flex flex-row items-center gap-x-3">
+                  <span><RiTimerLine /></span>
+                  <span>{item.duration}</span>
+                </div>
+
+                <div className="flex flex-row items-center gap-x-3">
+                  <span><HiOutlinePhoto /></span>
+                  <span>{item.product}</span>
+                </div>
+              </div>
+
+              <Link
+                href={item.paket}
+                className="mt-auto w-full rounded-xl border-2 border-[#0B1957] py-2 text-center text-[#0B1957] transition-all hover:bg-[#0B1957] hover:text-white"
+              >
+                Detail Paket
+              </Link>
             </div>
           ))}
         </div>

@@ -134,23 +134,23 @@ export default function BookingHistoryPage() {
         <NavigationBar />
       </div>
 
-      <main className="min-h-screen px-6 pb-24 pt-35 sm:px-12 lg:px-20">
+      <main className="min-h-screen px-4 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 lg:px-20 lg:pt-35">
         <div className="mx-auto max-w-[1080px]">
-          <h1 className="text-[42px] font-semibold leading-none">Riwayat Booking</h1>
+          <h1 className="text-[28px] font-semibold leading-none sm:text-[36px] lg:text-[42px]">Riwayat Booking</h1>
 
           {summary && (
             <div className="mt-6 grid gap-4 md:grid-cols-3">
               <div className="rounded-xl bg-white px-5 py-4 shadow-sm">
                 <p className="text-[16px] text-[#666]">Total Booking</p>
-                <p className="text-[30px] font-semibold">{summary.totalBookings}</p>
+                <p className="text-[24px] font-semibold sm:text-[30px]">{summary.totalBookings}</p>
               </div>
               <div className="rounded-xl bg-white px-5 py-4 shadow-sm">
                 <p className="text-[16px] text-[#666]">Booking Paid</p>
-                <p className="text-[30px] font-semibold">{summary.paidBookings}</p>
+                <p className="text-[24px] font-semibold sm:text-[30px]">{summary.paidBookings}</p>
               </div>
               <div className="rounded-xl bg-white px-5 py-4 shadow-sm">
                 <p className="text-[16px] text-[#666]">Total Money Spent</p>
-                <p className="text-[30px] font-semibold">{formatRupiah(summary.totalSpent)}</p>
+                <p className="text-[24px] font-semibold sm:text-[30px]">{formatRupiah(summary.totalSpent)}</p>
               </div>
             </div>
           )}
@@ -170,7 +170,7 @@ export default function BookingHistoryPage() {
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <p className="text-[14px] text-[#666]">Nomor Pesanan</p>
-                      <p className="text-[28px] font-semibold leading-none">{item.bookingCode}</p>
+                      <p className="text-[22px] font-semibold leading-none sm:text-[28px]">{item.bookingCode}</p>
                     </div>
                     <span className="rounded-full bg-[#fdebf2] px-3 py-1 text-[13px] font-semibold text-[#B33362]">
                       {item.payment?.status ?? item.status}

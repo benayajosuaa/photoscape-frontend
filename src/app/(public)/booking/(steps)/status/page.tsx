@@ -312,7 +312,7 @@ export default function StatusPage() {
         <NavigationBar />
       </div>
 
-      <main className="min-h-screen px-6 pb-24 pt-35 sm:px-10">
+      <main className="min-h-screen px-4 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 lg:px-10 lg:pt-35">
         <div className="mx-auto max-w-900">
           <div className="mb-10 flex justify-center">
             <div className="flex gap-x-3">
@@ -331,8 +331,8 @@ export default function StatusPage() {
             </div>
           </div>
 
-          <h1 className="text-center font-semibold leading-none text-4xl">Pembayaran Berhasil!</h1>
-          <p className="mt-4 text-center text-xl text-[#666]">
+          <h1 className="text-center text-2xl font-semibold leading-none sm:text-3xl lg:text-4xl">Pembayaran Berhasil!</h1>
+          <p className="mt-3 text-center text-base text-[#666] sm:mt-4 sm:text-xl">
             Terima kasih telah mempercayakan momen Anda <br />
             bersama Photoscape.
           </p>
@@ -344,44 +344,44 @@ export default function StatusPage() {
           )}
 
           <section ref={invoiceCardRef} className="relative mx-auto mt-8 w-full max-w-[680px] overflow-hidden rounded-[20px] bg-[#EECFDB]">
-            <div className="bg-[#0B1957] px-8 py-6 text-white">
+            <div className="bg-[#0B1957] px-5 py-5 text-white sm:px-8 sm:py-6">
               <p className="text-lg mb-2 uppercase tracking-wide text-[#FA9EBC]">Nomor Pesanan</p>
               <p className="text-3xl font-semibold leading-none text-[#FA9EBC]">
                 {ticketData?.bookingCode || (loading ? "Memuat..." : "-")}
               </p>
             </div>
 
-            <div className="px-8 pb-8 pt-7">
+            <div className="px-4 pb-6 pt-5 sm:px-8 sm:pb-8 sm:pt-7">
               {loading && !ticketData ? (
-                <p className="text-[32px] text-[#666]">Memuat tiket...</p>
+                <p className="text-xl text-[#666] sm:text-[32px]">Memuat tiket...</p>
               ) : (
                 <>
-                  <div className="grid grid-cols-2 gap-x-7 gap-y-7 text-[#0B1957]">
+                  <div className="grid grid-cols-1 gap-x-7 gap-y-5 text-[#0B1957] sm:grid-cols-2 sm:gap-y-7">
                     <div>
-                      <p className="text-xl text-[#666]">Nama</p>
-                      <p className="text-3xl font-semibold">{ticketData?.customer.name || "-"}</p>
+                      <p className="text-base text-[#666] sm:text-xl">Nama</p>
+                      <p className="text-xl font-semibold sm:text-3xl">{ticketData?.customer.name || "-"}</p>
                     </div>
                     <div>
-                      <p className="text-xl text-[#666]">No. HP</p>
-                      <p className="text-3xl font-semibold">{ticketData?.customer.phone || "-"}</p>
+                      <p className="text-base text-[#666] sm:text-xl">No. HP</p>
+                      <p className="text-xl font-semibold sm:text-3xl">{ticketData?.customer.phone || "-"}</p>
                     </div>
                     <div>
-                      <p className="text-xl text-[#666]">Nama Paket</p>
-                      <p className="text-3xl font-semibold">{ticketData?.package.name || "-"}</p>
+                      <p className="text-base text-[#666] sm:text-xl">Nama Paket</p>
+                      <p className="text-xl font-semibold sm:text-3xl">{ticketData?.package.name || "-"}</p>
                     </div>
                     <div>
-                      <p className="text-xl text-[#666]">Durasi</p>
-                      <p className="text-3xl font-semibold">{ticketData ? `${ticketData.package.durationMinutes} menit` : "-"}</p>
+                      <p className="text-base text-[#666] sm:text-xl">Durasi</p>
+                      <p className="text-xl font-semibold sm:text-3xl">{ticketData ? `${ticketData.package.durationMinutes} menit` : "-"}</p>
                     </div>
                     <div>
-                      <p className="text-xl text-[#666]">Tanggal</p>
-                      <p className="text-3xl font-semibold">
+                      <p className="text-base text-[#666] sm:text-xl">Tanggal</p>
+                      <p className="text-xl font-semibold sm:text-3xl">
                         {ticketData ? formatBookingDate(ticketData.schedule.date) : "-"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[26px] text-[#666]">Waktu</p>
-                      <p className="text-3xl font-semibold">
+                      <p className="text-base text-[#666] sm:text-[26px]">Waktu</p>
+                      <p className="text-xl font-semibold sm:text-3xl">
                         {ticketData ? formatBookingTime(ticketData.schedule.startTime) : "-"}
                       </p>
                     </div>
@@ -390,8 +390,8 @@ export default function StatusPage() {
                   <div className="mt-10 border-t border-dashed  border-[#bfa9b3] pt-4">
                     <div className="mt-1 lex items-start gap-2 text-[#0B1957]">
                       <div>
-                        <p className="text-[24px] text-[#666]">Lokasi Studio</p>
-                        <p className="text-[38px] font-semibold">{ticketData?.location || "-"}</p>
+                        <p className="text-base text-[#666] sm:text-[24px]">Lokasi Studio</p>
+                        <p className="text-2xl font-semibold sm:text-[38px]">{ticketData?.location || "-"}</p>
                       </div>
                     </div>
                   </div>
@@ -401,18 +401,18 @@ export default function StatusPage() {
                     <div className="absolute -right-12 -top-3.5 h-7 w-7 rounded-full bg-[#EFEFEF]" />
 
                     <div className="flex justify-center">
-                      <div className="rounded-xl bg-[#F5F5F5] p-4 shadow-[0_6px_14px_rgba(15,24,63,0.18)]">
+                      <div className="rounded-xl bg-[#F5F5F5] p-3 shadow-[0_6px_14px_rgba(15,24,63,0.18)] sm:p-4">
                         {ticketQrImage ? (
-                          <img src={ticketQrImage} alt="QR Tiket Booking" className="h-50 w-50" />
+                          <img src={ticketQrImage} alt="QR Tiket Booking" className="h-40 w-40 sm:h-50 sm:w-50" />
                         ) : (
-                          <div className="flex h-50 w-50 items-center justify-center text-center text-lg text-[#666]">
+                          <div className="flex h-40 w-40 items-center justify-center text-center text-sm text-[#666] sm:h-50 sm:w-50 sm:text-lg">
                             QR tiket belum tersedia
                           </div>
                         )}
                       </div>
                     </div>
 
-                    <p className="mt-8 text-center text-xl italic text-[#6a6a6a]">
+                    <p className="mt-6 text-center text-sm italic text-[#6a6a6a] sm:mt-8 sm:text-xl">
                       Tunjukkan kode QR ini kepada admin saat tiba di studio.
                     </p>
                   </div>

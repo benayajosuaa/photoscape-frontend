@@ -359,7 +359,7 @@ export default function SchedulePage() {
         <NavigationBar />
       </div>
 
-      <main className="min-h-screen p-20 pt-35">
+      <main className="min-h-screen p-4 pt-28 sm:p-8 sm:pt-32 lg:p-20 lg:pt-35">
         <div className="mx-auto">
           <div className="pb-13 flex justify-center">
             <div className="flex gap-x-3">
@@ -372,7 +372,7 @@ export default function SchedulePage() {
             </div>
           </div>
 
-          <h1 className="mb-8 text-4xl font-semibold leading-none">Pilih Jadwal</h1>
+          <h1 className="mb-8 text-2xl font-semibold leading-none sm:text-3xl lg:text-4xl">Pilih Jadwal</h1>
 
           {errorMessage && (
             <div className="mb-6 rounded-xl border border-[#FA9EBC] bg-[#fdebf2] px-5 py-4 text-[18px] text-[#B33362]">
@@ -380,8 +380,8 @@ export default function SchedulePage() {
             </div>
           )}
 
-          <section className="flex gap-12">
-            <div className="w-120 rounded-[26px] bg-[#F4E6EE] p-8 ">
+          <section className="flex flex-col gap-6 xl:flex-row xl:gap-12">
+            <div className="w-full rounded-[26px] bg-[#F4E6EE] p-5 sm:p-8 xl:w-[480px]">
               <div className="mb-7 flex items-center justify-between">
                 <button
                   type="button"
@@ -390,7 +390,7 @@ export default function SchedulePage() {
                 >
                   &lt;
                 </button>
-                <span className="text-[34px] font-semibold">
+                <span className="text-[24px] font-semibold sm:text-[30px] lg:text-[34px]">
                   {MONTH_NAMES[monthCursor.getMonth()]} {monthCursor.getFullYear()}
                 </span>
                 <button
@@ -402,13 +402,13 @@ export default function SchedulePage() {
                 </button>
               </div>
 
-              <div className="mb-5 grid grid-cols-7 gap-y-5 text-center text-[20px] text-[#666]">
+              <div className="mb-5 grid grid-cols-7 gap-y-4 text-center text-[14px] text-[#666] sm:gap-y-5 sm:text-[20px]">
                 {DAY_LABELS.map(day => (
                   <span key={day}>{day}</span>
                 ))}
               </div>
 
-              <div className="grid grid-cols-7 gap-y-5 text-center text-[24px]">
+              <div className="grid grid-cols-7 gap-y-4 text-center text-[16px] sm:gap-y-5 sm:text-[22px] lg:text-[24px]">
                 {calendarCells.map((day, index) => {
                   if (!day) {
                     return <span key={`empty-${index}`} />;
@@ -424,7 +424,7 @@ export default function SchedulePage() {
                       key={`day-${day}`}
                       type="button"
                       onClick={() => handlePickDate(day)}
-                      className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full transition ${
+                      className={`mx-auto flex h-8 w-8 items-center justify-center rounded-full transition sm:h-10 sm:w-10 lg:h-12 lg:w-12 ${
                         isSelected ? "bg-[#FA9EBC] font-semibold" : "hover:bg-[#f8cad9]"
                       }`}
                     >
@@ -435,9 +435,9 @@ export default function SchedulePage() {
               </div>
             </div>
 
-            <div className="flex-1 rounded-[26px] bg-[#F4E6EE] p-8 ">
-              <h2 className="mb-5 text-[32px] font-semibold">Slot Waktu Tersedia</h2>
-              <div className="mb-6 flex gap-4">
+            <div className="flex-1 rounded-[26px] bg-[#F4E6EE] p-5 sm:p-8">
+              <h2 className="mb-5 text-[24px] font-semibold sm:text-[28px] lg:text-[32px]">Slot Waktu Tersedia</h2>
+              <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
                 <select
                   value={selectedLocationId}
                   onChange={event => setSelectedLocationId(event.target.value)}
@@ -475,7 +475,7 @@ export default function SchedulePage() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-5">
                 {availabilityLoading || metaLoading ? (
                   <div className="col-span-5 rounded-xl bg-white px-4 py-5 text-center text-[20px] text-[#666]">
                     Memuat slot waktu...
@@ -499,7 +499,7 @@ export default function SchedulePage() {
                           }
                         }}
                         disabled={isBooked}
-                        className={`rounded-xl border-2 px-2 py-4 text-xl font-semibold transition ${
+                        className={`rounded-xl border-2 px-2 py-3 text-base font-semibold transition sm:py-4 sm:text-xl ${
                           isBooked
                             ? "border-transparent bg-[#dfdfdf] text-[#050b29] cursor-not-allowed"
                             : isSelected
@@ -516,7 +516,7 @@ export default function SchedulePage() {
             </div>
           </section>
 
-          <div className="mt-20 flex items-center justify-between">
+          <div className="mt-12 flex flex-col gap-4 sm:mt-20 sm:flex-row sm:items-center sm:justify-between">
             <button
               type="button"
               onClick={() => {

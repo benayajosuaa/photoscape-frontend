@@ -283,7 +283,7 @@ export default function PaymentPage() {
         <NavigationBar />
       </div>
 
-      <main className="min-h-screen p-20 pt-35">
+      <main className="min-h-screen p-4 pt-28 sm:p-8 sm:pt-32 lg:p-20 lg:pt-35">
         <div className="mx-auto ">
           
 
@@ -299,32 +299,32 @@ export default function PaymentPage() {
           </div>
 
           {(errorMessage || submitMessage) && (
-            <div className="mx-auto mb-6 w-full max-w-[#560px] rounded-xl border border-[#FA9EBC] bg-[#fdebf2] px-5 py-4 text-[#B33362]">
+            <div className="mx-auto mb-6 w-full max-w-[560px] rounded-xl border border-[#FA9EBC] bg-[#fdebf2] px-5 py-4 text-[#B33362]">
               {errorMessage || submitMessage}
             </div>
           )}
 
-          <section className="mx-auto w-full max-w-200 rounded-[20px] bg-[#F5F5F5] px-7 py-8 shadow-[0_8px_18px_rgba(15,24,63,0.2)] sm:px-9">
-            <h1 className="mb-14 text-center text-[36px] font-semibold leading-none text-[#0B1957]">Ringkasan Pesanan</h1>
+          <section className="mx-auto w-full max-w-[800px] rounded-[20px] bg-[#F5F5F5] px-4 py-6 shadow-[0_8px_18px_rgba(15,24,63,0.2)] sm:px-7 sm:py-8 lg:px-9">
+            <h1 className="mb-8 text-center text-[28px] font-semibold leading-none text-[#0B1957] sm:mb-14 sm:text-[36px]">Ringkasan Pesanan</h1>
 
             {loading ? (
               <p className="text-center text-xl">Memuat ringkasan...</p>
             ) : (
               <div className="space-y-4">
-                <div className="flex items-start justify-between gap-6">
+                <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:gap-6">
                   <div>
-                    <p className="text-2xl font-semibold leading-tight">{selectedPackage?.name || "Paket"}</p>
-                    <p className="mt-2 text-lg text-[#6b6b6b]">{formatBookingDate(date)}</p>
-                    <p className="text-lg text-[#6b6b6b]">Waktu: {formatBookingTime(startTime)}</p>
-                    <p className="text-lg text-[#6b6b6b]">Lokasi: {selectedLocation?.name || "-"}</p>
+                    <p className="text-xl font-semibold leading-tight sm:text-2xl">{selectedPackage?.name || "Paket"}</p>
+                    <p className="mt-1 text-base text-[#6b6b6b] sm:mt-2 sm:text-lg">{formatBookingDate(date)}</p>
+                    <p className="text-base text-[#6b6b6b] sm:text-lg">Waktu: {formatBookingTime(startTime)}</p>
+                    <p className="text-base text-[#6b6b6b] sm:text-lg">Lokasi: {selectedLocation?.name || "-"}</p>
                   </div>
-                  <p className="text-[30px] font-semibold leading-none">{formatRupiah(packagePrice)}</p>
+                  <p className="text-[24px] font-semibold leading-none sm:text-[30px]">{formatRupiah(packagePrice)}</p>
                 </div>
 
                 {parsedAddOns.length > 0 && (
                   <div className="space-y-2 mb-5">
                     {parsedAddOns.map(item => (
-                      <div key={item.addOn.id} className="flex items-center justify-between gap-4 text-[16px] italic text-[#707070]">
+                      <div key={item.addOn.id} className="flex items-center justify-between gap-4 text-sm italic text-[#707070] sm:text-[16px]">
                         <p>
                           + {item.addOn.name} : {item.quantity} Orang
                         </p>
@@ -334,10 +334,10 @@ export default function PaymentPage() {
                   </div>
                 )}
 
-                <div className="border-t pt-12 border-dashed border-[#969696]">
+                <div className="border-t border-dashed border-[#969696] pt-8 sm:pt-12">
                   <div className="flex items-center justify-between">
-                    <p className="text-3xl font-semibold leading-none">Total</p>
-                    <p className="text-3xl font-semibold leading-none">{formatRupiah(grandTotal)}</p>
+                    <p className="text-2xl font-semibold leading-none sm:text-3xl">Total</p>
+                    <p className="text-2xl font-semibold leading-none sm:text-3xl">{formatRupiah(grandTotal)}</p>
                   </div>
                 </div>
 
@@ -345,7 +345,7 @@ export default function PaymentPage() {
                   type="button"
                   onClick={handleConfirm}
                   disabled={isSubmitting || loading}
-                  className={`mt-10 w-full rounded-2xl py-4 text-xl font-semibold leading-none transition ${
+                  className={`mt-8 w-full rounded-2xl py-3 text-lg font-semibold leading-none transition sm:mt-10 sm:py-4 sm:text-xl ${
                     isSubmitting || loading
                       ? "cursor-not-allowed bg-[#f0bfd1] text-[#6e6e6e]"
                       : "bg-[#FA9EBC] text-[#0B1957] hover:opacity-90"
@@ -357,7 +357,7 @@ export default function PaymentPage() {
             )}
           </section>
 
-          <div className="mt-12">
+          <div className="mt-8 sm:mt-12">
             <button
               type="button"
               onClick={() => {
@@ -373,7 +373,7 @@ export default function PaymentPage() {
 
                 router.push(`/booking/schedule?${backParams.toString()}`);
               }}
-              className="flex items-center gap-x-2 rounded-xl border-2 border-[#FA9EBC] bg-white px-6 py-2 text-xl text-[#0B1957]"
+              className="flex items-center gap-x-2 rounded-xl border-2 border-[#FA9EBC] bg-white px-5 py-2 text-base text-[#0B1957] sm:px-6 sm:text-xl"
             >
               <IoArrowBack />
               <span>Kembali</span>

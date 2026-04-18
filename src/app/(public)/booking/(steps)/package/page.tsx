@@ -281,7 +281,7 @@ export default function PackagePage() {
         <NavigationBar />
       </div>
 
-      <div className="min-h-screen pt-32 px-20">
+      <div className="min-h-screen px-4 pt-28 sm:px-8 lg:px-20 lg:pt-32">
         <div className="flex flex-col gap-y-16">
           <div className="flex justify-center">
             <div className="flex gap-x-3">
@@ -295,7 +295,7 @@ export default function PackagePage() {
           </div>
 
           <div className="flex flex-col gap-y-10">
-            <h1 className="text-2xl text-[#0B1957] font-semibold">Pilih Kategori dan Paket</h1>
+            <h1 className="text-xl text-[#0B1957] font-semibold sm:text-2xl">Pilih Kategori dan Paket</h1>
 
             {errorMessage && (
               <div className="rounded-xl border border-[#FA9EBC] bg-[#fdebf2] px-5 py-4 text-[#B33362]">
@@ -304,7 +304,7 @@ export default function PackagePage() {
             )}
 
             
-            <div className="flex gap-x-10 border-b text-xl">
+            <div className="flex gap-x-4 overflow-x-auto border-b pb-1 text-base sm:gap-x-10 sm:text-xl">
               {(["studio", "selfphoto", "photobox"] as PackageType[]).map(tab => (
                 <button
                   key={tab}
@@ -335,24 +335,24 @@ export default function PackagePage() {
                   return (
                     <div
                       key={item.id}
-                      className="text-2xl p-4 flex flex-row justify-between w-full border border-[#0B1957]  bg-[#F8C6D673] text-[#0B1957] rounded-2xl"
+                      className="flex w-full flex-col gap-4 rounded-2xl border border-[#0B1957] bg-[#F8C6D673] p-3 text-lg text-[#0B1957] sm:p-4 sm:text-2xl"
                     >
-                      <div className="flex flex-row justify-between w-full gap-x-10 p-3 ">
-                        <div className="flex flex-row justify-between w-full">
+                      <div className="flex w-full flex-row justify-between gap-x-4 p-1 sm:gap-x-10 sm:p-3">
+                        <div className="flex w-full flex-col justify-between gap-3 sm:flex-row">
                           <div className="">
                             <h2 className="font-semibold">{item.name}</h2>
-                            <p className="text-base text-[#374151] mt-1">
+                            <p className="mt-1 text-sm text-[#374151] sm:text-base">
                               {item.durationMinutes} menit • Maks {item.maxCapacity} orang
                             </p>
                           </div>
 
-                          <div className="flex flex-row gap-x-3 items-center font-semibold ">
-                            <span className="text-xl font-medium">Rp</span>
+                          <div className="flex flex-row items-center gap-x-2 font-semibold sm:gap-x-3">
+                            <span className="text-base font-medium sm:text-xl">Rp</span>
                             <span>{formatRupiah(item.price)}</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center">
+                      <div className="flex items-center justify-end">
                         <div>
                             <button
                               onClick={() => setSelectedPackageId(isSelected ? "" : item.id)}
@@ -374,7 +374,7 @@ export default function PackagePage() {
 
             <div>
               <div className="flex flex-col gap-4">
-                <h1 className="text-2xl font-semibold text-[#0B1957]">Tambahan</h1>
+                <h1 className="text-xl font-semibold text-[#0B1957] sm:text-2xl">Tambahan</h1>
 
                 {isLoading ? (
                   <div className="text-lg text-gray-500">Memuat add-on...</div>
@@ -387,11 +387,11 @@ export default function PackagePage() {
                     return (
                       <div
                         key={item.id}
-                        className="flex justify-between items-center  p-4 pl-10 pr-10 bg-[#F4EAF4] rounded-xl"
+                        className="flex flex-col items-start justify-between gap-3 rounded-xl bg-[#F4EAF4] p-4 sm:flex-row sm:items-center sm:gap-0 sm:pl-10 sm:pr-10"
                       >
-                        <span className="text-xl">{item.name}</span>
+                        <span className="text-base sm:text-xl">{item.name}</span>
 
-                        <div className="flex flex-row items-center gap-x-5 text-xl">
+                        <div className="flex w-full flex-row items-center justify-between gap-x-3 text-base sm:w-auto sm:gap-x-5 sm:text-xl">
                           <span className="text-right">Rp {formatRupiah(item.price)}</span>
 
                           {qty > 0 && (
@@ -419,7 +419,7 @@ export default function PackagePage() {
               </div>
             </div>
 
-            <div className="flex flex-row items-center justify-between mb-30 mt-10">
+            <div className="mb-24 mt-10 flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center lg:mb-30">
               <button
                 onClick={() => {
                   const params = new URLSearchParams({

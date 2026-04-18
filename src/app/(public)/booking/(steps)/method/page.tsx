@@ -307,7 +307,7 @@ export default function MethodPage() {
         <NavigationBar />
       </div>
 
-      <main className="min-h-screen p-20 pt-35">
+      <main className="min-h-screen p-4 pt-28 sm:p-8 sm:pt-32 lg:p-20 lg:pt-35">
         <div className="">
         
 
@@ -317,7 +317,7 @@ export default function MethodPage() {
               <div className="w-7 h-2 bg-[#FA9EBC] rounded-full" />
               <div className="w-7 h-2 bg-[#FA9EBC] rounded-full" />
               <div className="w-7 h-2 bg-[#FA9EBC] rounded-full" />
-              <div className="w-7 h-2 bg-[#FA9EBC] rounded-full" /> 
+              <div className="w-7 h-2 bg-[#FA9EBC] rounded-full" />
               <div className="w-7 h-2 bg-gray-300 rounded-full" />
             </div>
           </div>
@@ -326,12 +326,12 @@ export default function MethodPage() {
             <div className="mb-6 rounded-xl border border-[#FA9EBC] bg-[#fdebf2] px-5 py-4 text-[#B33362]">{message}</div>
           )}
 
-          <div className="flex flex-row gap-x-20">
+          <div className="flex flex-col gap-8 lg:flex-row lg:gap-x-20">
             {/* PAYMENT METHOD */}
-            <div className="flex w-1/2">
+            <div className="flex w-full lg:w-1/2">
               <section>
-                <h1 className="text-2xl font-semibold leading-none text-[#0B1957]">Pilih Pembayaran</h1>
-                <p className="mt-6 text-xl text-[#515151]">
+                <h1 className="text-xl font-semibold leading-none text-[#0B1957] sm:text-2xl">Pilih Pembayaran</h1>
+                <p className="mt-4 text-base text-[#515151] sm:mt-6 sm:text-xl">
                   Selesaikan pesanan Anda dengan metode pembayaran yang tersedia.
                 </p>
 
@@ -350,7 +350,7 @@ export default function MethodPage() {
                         >
                           <span className="flex items-center gap-4">
                             {option.icon}
-                            <span className="text-xl font-semibold">{option.label}</span>
+                            <span className="text-base font-semibold sm:text-xl">{option.label}</span>
                           </span>
                           <span className="flex h-7 w-7 items-center justify-center rounded-full border-3 border-[#0B1957]">
                             <span
@@ -365,7 +365,7 @@ export default function MethodPage() {
                   </div>
 
                   <div>
-                    <h2 className="mb-4 mt-10  text-2xl font-semibold text-[#515151]">Virtual Account</h2>
+                    <h2 className="mb-4 mt-8 text-xl font-semibold text-[#515151] sm:mt-10 sm:text-2xl">Virtual Account</h2>
                     <div className="space-y-4">
                       {groupedOptions.va.map(option => {
                         const isSelected = selectedMethod === option.key;
@@ -381,7 +381,7 @@ export default function MethodPage() {
                               <span className="items-center justify-center">
                                 {option.icon}
                               </span>
-                              <span className="text-xl font-semibold">
+                              <span className="text-base font-semibold sm:text-xl">
                                 {option.label}
                               </span>
                             </span>
@@ -400,7 +400,7 @@ export default function MethodPage() {
                   </div>
 
                   <div>
-                    <h2 className="mb-4 text-2xl font-semibold text-[#515151]">E-wallet</h2>
+                    <h2 className="mb-4 text-xl font-semibold text-[#515151] sm:text-2xl">E-wallet</h2>
                     <div className="grid gap-4 sm:grid-cols-2">
                       {groupedOptions.ewallet.map(option => {
                         const isSelected = selectedMethod === option.key;
@@ -414,7 +414,7 @@ export default function MethodPage() {
                           >
                             <span className="flex items-center gap-4">
                               {option.icon}
-                              <span className="text-xl font-semibold">{option.label}</span>
+                              <span className="text-base font-semibold sm:text-xl">{option.label}</span>
                             </span>
                             <span className="flex h-7 w-7 items-center justify-center rounded-full border-3 border-[#0B1957]">
                               <span
@@ -434,7 +434,7 @@ export default function MethodPage() {
                   <button
                     type="button"
                     onClick={() => router.push(`/booking/payment?${searchParams.toString()}`)}
-                    className="flex flex-row items-center gap-x-2 text-xl p-2 border-2 border-[#FA9EBC] rounded-xl pl-6 pr-6"
+                    className="flex flex-row items-center gap-x-2 rounded-xl border-2 border-[#FA9EBC] p-2 pl-4 pr-4 text-base sm:pl-6 sm:pr-6 sm:text-xl"
                   >
                     <span><IoArrowBack /> </span>
                     <span>Kembali</span>
@@ -444,27 +444,27 @@ export default function MethodPage() {
             </div>
             
             {/* RINGKASAN */}
-            <div className="flex w-1/2">
+            <div className="flex w-full lg:w-1/2">
                <aside className="h-fit rounded-[20px] bg-[#F5F5F5] w-full px-6 py-7 ">
-                  <h3 className="mb-6 text-2xl font-reguler leading-none">Ringkasan Pesanan</h3>
+                  <h3 className="mb-6 text-xl leading-none sm:text-2xl">Ringkasan Pesanan</h3>
 
                   {loadingSummary || !summary ? (
-                    <p className="text-[28px] text-[#666]">Memuat ringkasan...</p>
+                    <p className="text-lg text-[#666] sm:text-[28px]">Memuat ringkasan...</p>
                   ) : (
                     <div>
                       <div className="flex items-start justify-between gap-y-4 pb-10">
                         <div>
-                          <p className="text-3xl mb-2 font-bold leading-tight">{summary.package.name}</p>
-                          <p className="text-[40px] mb-10 font-semibold leading-none">{formatRupiah(summary.pricing.packagePrice)}</p>
+                          <p className="mb-2 text-2xl font-bold leading-tight sm:text-3xl">{summary.package.name}</p>
+                          <p className="mb-6 text-[30px] font-semibold leading-none sm:mb-10 sm:text-[40px]">{formatRupiah(summary.pricing.packagePrice)}</p>
                           
-                          <p className="text-2xl text-[#6b6b6b]">Waktu: {formatBookingTime(summary.schedule.startTime)} - {formatBookingDate(summary.schedule.date)} </p>
-                          <p className="text-2xl text-[#6b6b6b]">Lokasi: {summary.location.name}</p>
+                          <p className="text-base text-[#6b6b6b] sm:text-2xl">Waktu: {formatBookingTime(summary.schedule.startTime)} - {formatBookingDate(summary.schedule.date)} </p>
+                          <p className="text-base text-[#6b6b6b] sm:text-2xl">Lokasi: {summary.location.name}</p>
                         </div>
                         
                       </div>
 
                       {addOnText && (
-                        <div className="mt-5 flex items-center justify-between gap-4 text-2xl text-[#707070]">
+                        <div className="mt-5 flex items-center justify-between gap-4 text-base text-[#707070] sm:text-2xl">
                           <p>{addOnText}</p>
                           <p>{formatRupiah(summary.pricing.addOnTotal)}</p>
                         </div>
@@ -472,8 +472,8 @@ export default function MethodPage() {
 
                       <div className="mt-5 border-t pt-10 text-[#0B1957] border-dashed border-[#989898] mb-4">
                         <div className="flex items-center justify-between">
-                          <p className="text-3xl font-semibold leading-none">Total:</p>
-                          <p className="text-3xl font-semibold leading-none">{formatRupiah(summary.pricing.totalPrice)}</p>
+                          <p className="text-2xl font-semibold leading-none sm:text-3xl">Total:</p>
+                          <p className="text-2xl font-semibold leading-none sm:text-3xl">{formatRupiah(summary.pricing.totalPrice)}</p>
                         </div>
                       </div>
 
@@ -481,7 +481,7 @@ export default function MethodPage() {
                         type="button"
                         onClick={handlePayNow}
                         disabled={isSubmitting || loadingSummary}
-                        className={`mt-6 w-full rounded-lg py-4 text-xl font-semibold leading-none transition ${
+                        className={`mt-6 w-full rounded-lg py-3 text-lg font-semibold leading-none transition sm:py-4 sm:text-xl ${
                           isSubmitting || loadingSummary
                             ? "cursor-not-allowed bg-[#f0bfd1] text-[#6e6e6e]"
                             : "bg-[#FA9EBC] text-[#0B1957] hover:opacity-90"

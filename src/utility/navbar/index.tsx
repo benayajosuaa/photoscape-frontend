@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Montserrat } from "next/font/google"
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { IoMenu, IoClose } from "react-icons/io5";
 import {
   API_BASE_URL,
   AuthUser,
@@ -21,6 +22,7 @@ export default function NavigationBar() {
   const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -101,6 +103,7 @@ export default function NavigationBar() {
       clearLoginSession();
       setUser(null);
       setMenuOpen(false);
+      setMobileNavOpen(false);
       router.push("/login");
       router.refresh();
     }
@@ -108,11 +111,11 @@ export default function NavigationBar() {
 
   return (
     <div className={`${monserratFont.className}`}>
-        <div className="flex flex-row justify-between p-5 pl-10 pr-10 bg-[#0B1957] font-semibold text-lg text-[#FA9EBC] items-center">
+        <div className="relative flex items-center justify-between bg-[#0B1957] px-4 py-4 text-[#FA9EBC] sm:px-6 lg:px-10 lg:py-5">
             <div>
-                <img className="h-10 w-auto" src="/logo/logo1.png" alt="" />
+                <img className="h-8 w-auto sm:h-9 lg:h-10" src="/logo/logo1.png" alt="" />
             </div>
-            <div className="flex flex-row gap-20">
+            <div className="hidden flex-row gap-8 text-sm font-semibold lg:flex lg:gap-14 xl:gap-20 lg:text-lg">
                 <span><Link href="/">Home</Link></span>
                 <span><Link href="/pricing">Pricing</Link></span>
                 <span><Link href="/gallery">Gallery</Link></span>
@@ -120,13 +123,14 @@ export default function NavigationBar() {
                 <span><Link href="/contact-us">Contact Us</Link></span>
                 
             </div>
+            <div className="flex items-center gap-3">
             <div ref={menuRef} className="relative">
                 {user ? (
                   <>
                     <button
                       type="button"
                       onClick={() => setMenuOpen(prev => !prev)}
-                      className="bg-[#FA9EBC] text-[#0B1957] p-2 pl-6 pr-6 font-semibold rounded-xl"
+                      className="rounded-xl bg-[#FA9EBC] px-3 py-1.5 text-sm font-semibold text-[#0B1957] sm:px-6 sm:py-2 sm:text-base"
                     >
                       {getFirstName(user.name)}
                     </button>
@@ -150,11 +154,31 @@ export default function NavigationBar() {
                     )}
                   </>
                 ) : (
-                  <span className="bg-[#FA9EBC] text-[#0B1957] p-2 pl-6 pr-6 font-semibold rounded-xl">
+                  <span className="rounded-xl bg-[#FA9EBC] px-3 py-1.5 text-sm font-semibold text-[#0B1957] sm:px-6 sm:py-2 sm:text-base">
                     <Link href="/login">Login</Link>
                   </span>
                 )}
             </div>
+            <button
+              type="button"
+              className="rounded-md p-1 text-[#FA9EBC] lg:hidden"
+              onClick={() => setMobileNavOpen(prev => !prev)}
+              aria-label="Toggle navigation"
+            >
+              {mobileNavOpen ? <IoClose className="text-[26px]" /> : <IoMenu className="text-[26px]" />}
+            </button>
+            </div>
+            {mobileNavOpen && (
+              <div className="absolute left-0 right-0 top-full z-40 border-t border-[#273782] bg-[#0B1957] px-4 py-3 lg:hidden">
+                <div className="flex flex-col gap-3 text-sm font-semibold">
+                  <Link href="/" onClick={() => setMobileNavOpen(false)}>Home</Link>
+                  <Link href="/pricing" onClick={() => setMobileNavOpen(false)}>Pricing</Link>
+                  <Link href="/gallery" onClick={() => setMobileNavOpen(false)}>Gallery</Link>
+                  <Link href="/booking/book" onClick={() => setMobileNavOpen(false)}>Booking</Link>
+                  <Link href="/contact-us" onClick={() => setMobileNavOpen(false)}>Contact Us</Link>
+                </div>
+              </div>
+            )}
         </div>
     </div>
   )

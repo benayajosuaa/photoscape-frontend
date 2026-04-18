@@ -237,7 +237,7 @@ export default function ConfirmPage() {
         <NavigationBar />
       </div>
 
-      <main className="min-h-screen p-20 pt-35">
+      <main className="min-h-screen p-4 pt-28 sm:p-8 sm:pt-32 lg:p-20 lg:pt-35">
         <div className="mx-auto max-w-[980px]">
           <div className="flex justify-center">
             <div className="flex gap-x-3">
@@ -250,28 +250,28 @@ export default function ConfirmPage() {
             </div>
           </div>
 
-          <p className="mt-10 mb-4 text-center text-2xl text-[#515151]">Selesaikan pembayaran dalam</p>
+          <p className="mb-4 mt-8 text-center text-lg text-[#515151] sm:mt-10 sm:text-2xl">Selesaikan pembayaran dalam</p>
 
           <div className="mt-4 flex justify-center">
-            <div className="flex items-center gap-3 rounded-xl bg-[#0B1957] px-7 py-3 text-[#FA9EBC]">
+            <div className="flex items-center gap-3 rounded-xl bg-[#0B1957] px-5 py-3 text-[#FA9EBC] sm:px-7">
               <FiClock className="text-xl" />
               <span className="text-xl font-semibold leading-none">{formatCountdown(timeLeftSeconds)}</span>
             </div>
           </div>
 
           {message && (
-            <div className="mx-auto mt-6 max-w-[760] rounded-xl border border-[#FA9EBC] bg-[#fdebf2] px-5 py-4 text-[#B33362]">
+            <div className="mx-auto mt-6 w-full max-w-[760px] rounded-xl border border-[#FA9EBC] bg-[#fdebf2] px-5 py-4 text-[#B33362]">
               {message}
             </div>
           )}
 
-          <section className="mx-auto mt-7 w-full max-w-[760] rounded-[20px] bg-[#EECFDB] px-8 py-8">
+          <section className="mx-auto mt-7 w-full max-w-[760px] rounded-[20px] bg-[#EECFDB] px-4 py-6 sm:px-8 sm:py-8">
             <div className="flex justify-center">
               <div className="rounded-[20px] bg-[#F5F5F5] p-5 shadow-[0_6px_14px_rgba(15,24,63,0.2)]">
                 {activeMethod === "qris" && qrImageUrl ? (
-                  <img src={qrImageUrl} alt="QR pembayaran" className="h-50 w-50" />
+                  <img src={qrImageUrl} alt="QR pembayaran" className="h-40 w-40 sm:h-50 sm:w-50" />
                 ) : (
-                  <div className="flex h-100 w-100 items-center justify-center text-center text-xl text-[#666]">
+                  <div className="flex h-40 w-40 items-center justify-center text-center text-sm text-[#666] sm:h-100 sm:w-100 sm:text-xl">
                     Metode ini tidak menggunakan QR
                   </div>
                 )}
@@ -287,30 +287,30 @@ export default function ConfirmPage() {
             )}
 
             <div className="mt-6 rounded-xl bg-[#F5F5F5] px-6 py-6">
-              <p className="text-3xl font-semibold text-[#515151]">RINGKASAN PESANAN</p>
+              <p className="text-2xl font-semibold text-[#515151] sm:text-3xl">RINGKASAN PESANAN</p>
 
               {loadingSummary || !summary ? (
-                <p className="mt-10 text-xl text-[#666]">Memuat ringkasan...</p>
+                <p className="mt-8 text-base text-[#666] sm:mt-10 sm:text-xl">Memuat ringkasan...</p>
               ) : (
                 <>
                   <span>
-                    <p className="mt-10 text-2xl font-semibold">{summary.package.name}</p>
-                    <p className="mt-1 text-2xl text-[#666]">{addOnSummary}</p>
+                    <p className="mt-8 text-xl font-semibold sm:mt-10 sm:text-2xl">{summary.package.name}</p>
+                    <p className="mt-1 text-lg text-[#666] sm:text-2xl">{addOnSummary}</p>
                   </span>
 
                   <div className="mt-4 border-t border-[#D4D4D4]" />
 
                   <div className="mt-4 flex items-center justify-between gap-4">
-                    <p className="text-2xl">Total Pembayaran</p>
-                    <p className="text-2xl font-semibold">{formatRupiah(summary.pricing.totalPrice)}</p>
+                    <p className="text-lg sm:text-2xl">Total Pembayaran</p>
+                    <p className="text-lg font-semibold sm:text-2xl">{formatRupiah(summary.pricing.totalPrice)}</p>
                   </div>
                 </>
               )}
             </div>
 
             <div className="mt-8">
-              <p className="text-xl font-semibold text-[#515151]">Cara Membayar</p>
-              <div className="mt-3 space-y-3 text-lg text-[#0B1957]">
+              <p className="text-lg font-semibold text-[#515151] sm:text-xl">Cara Membayar</p>
+              <div className="mt-3 space-y-3 text-sm text-[#0B1957] sm:text-lg">
                 <div className="flex flex-col gap-y-4">
                   <p className="flex flex-row gap-x-2 items-center">
                     <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0B1957] text-sm font-semibold text-white">1</span>
@@ -329,11 +329,11 @@ export default function ConfirmPage() {
             </div>
           </section>
 
-          <div className="mt-20 flex items-center justify-between">
+          <div className="mt-10 flex flex-col gap-4 sm:mt-20 sm:flex-row sm:items-center sm:justify-between">
             <button
               type="button"
               onClick={handleBack}
-              className="flex flex-row items-center gap-x-2 text-xl p-2 border-2 border-[#FA9EBC] rounded-xl pl-6 pr-6"
+              className="flex flex-row items-center gap-x-2 rounded-xl border-2 border-[#FA9EBC] p-2 pl-4 pr-4 text-base sm:pl-6 sm:pr-6 sm:text-xl"
             >
               <IoArrowBack />
               <span>Kembali</span>
@@ -343,7 +343,7 @@ export default function ConfirmPage() {
               type="button"
               onClick={handleCheckPayment}
               disabled={checkingPayment || loadingSummary}
-              className={`flex flex-row items-center gap-x-2 text-xl p-2 border-2 border-[#FA9EBC] rounded-xl pl-6 pr-6${
+              className={`flex flex-row items-center gap-x-2 rounded-xl border-2 border-[#FA9EBC] p-2 pl-4 pr-4 text-base sm:pl-6 sm:pr-6 sm:text-xl${
                 checkingPayment || loadingSummary
                   ? "cursor-not-allowed bg-[#f0bfd1] text-[#6e6e6e]"
                   : "bg-[#FA9EBC] text-[#0B1957] hover:opacity-90"
