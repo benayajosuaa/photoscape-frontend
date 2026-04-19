@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { API_BASE_URL, storeLoginSession } from "@/lib/auth-client";
+import { clearDashboardAuth, normalizeRole, setAuth } from "@/lib/auth";
+import type { Role } from "@/types";
 
 const monserratFont = Montserrat({
   subsets: ["latin"],
@@ -25,6 +27,14 @@ type LoginResponse = {
     } | null;
   };
   error?: string;
+};
+
+const INTERNAL_ROLE_BY_EMAIL: Record<string, Role> = {
+  "adminmedan@photoscape.com": "staff",
+  "adminjakarta@photoscape.com": "staff",
+  "adminsurabaya@photoscape.com": "staff",
+  "manager@photoscape.com": "manager",
+  "owner@photoscape.com": "owner",
 };
 
 export default function LoginPage() {
@@ -60,14 +70,34 @@ export default function LoginPage() {
         throw new Error(json.error || "Login gagal");
       }
 
+      const normalizedEmail = (json.user.email || "").trim().toLowerCase();
+      const normalizedRole = normalizeRole((json.user.role || "").trim().toLowerCase());
+      const forcedRole = INTERNAL_ROLE_BY_EMAIL[normalizedEmail];
+      const dashboardRole = forcedRole || normalizedRole;
+      const isInternalAccount = Boolean(forcedRole);
+
       storeLoginSession({
         token: json.token,
-        user: json.user,
+        user: {
+          ...json.user,
+          role: isInternalAccount ? dashboardRole : "customer",
+        },
       });
 
-      setSuccessMessage("Login berhasil. Mengalihkan...");
-      const redirect = searchParams.get("redirect");
-      router.push(redirect && redirect.startsWith("/") ? redirect : "/");
+      if (isInternalAccount) {
+        setAuth(json.token, {
+          ...json.user,
+          role: dashboardRole,
+          isActive: true,
+        });
+        setSuccessMessage("Login internal berhasil. Mengalihkan ke dashboard...");
+        router.push("/dashboard/overview");
+      } else {
+        clearDashboardAuth();
+        setSuccessMessage("Login berhasil. Mengalihkan...");
+        const redirect = searchParams.get("redirect");
+        router.push(redirect && redirect.startsWith("/") ? redirect : "/");
+      }
       router.refresh();
     } catch (error: any) {
       setErrorMessage(error.message || "Login gagal");
