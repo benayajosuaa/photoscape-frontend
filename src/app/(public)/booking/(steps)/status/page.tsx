@@ -4,7 +4,7 @@ import Footer from "@/utility/footer";
 import NavigationBar from "@/utility/navbar";
 import { Montserrat } from "next/font/google";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { IoCheckmark, IoLocationSharp } from "react-icons/io5";
 
 const monserratFont = Montserrat({
@@ -79,7 +79,7 @@ function formatBookingTime(value: string) {
   return `${hours}.${minutes}`;
 }
 
-export default function StatusPage() {
+function StatusPageContent() {
   const searchParams = useSearchParams();
   const bookingId = searchParams.get("bookingId") || "";
 
@@ -440,5 +440,13 @@ export default function StatusPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function StatusPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#EFEFEF]" />}>
+      <StatusPageContent />
+    </Suspense>
   );
 }

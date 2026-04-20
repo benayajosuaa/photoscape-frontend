@@ -4,7 +4,7 @@ import Footer from "@/utility/footer";
 import NavigationBar from "@/utility/navbar";
 import { Montserrat } from "next/font/google";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import {
@@ -82,7 +82,7 @@ function buildCalendarCells(date: Date) {
   return cells;
 }
 
-export default function SchedulePage() {
+function SchedulePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const incomingCity = searchParams.get("city") || "";
@@ -556,5 +556,13 @@ export default function SchedulePage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function SchedulePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#EFEFEF]" />}>
+      <SchedulePageContent />
+    </Suspense>
   );
 }

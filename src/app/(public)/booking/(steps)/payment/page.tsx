@@ -4,7 +4,7 @@ import Footer from "@/utility/footer";
 import NavigationBar from "@/utility/navbar";
 import { Montserrat } from "next/font/google";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { IoArrowBack } from "react-icons/io5";
 
 const monserratFont = Montserrat({
@@ -88,7 +88,7 @@ function getClientAuthToken() {
   return fromStorage || ENV_AUTH_TOKEN;
 }
 
-export default function PaymentPage() {
+function PaymentPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -384,5 +384,13 @@ export default function PaymentPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#EFEFEF]" />}>
+      <PaymentPageContent />
+    </Suspense>
   );
 }

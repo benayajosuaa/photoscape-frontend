@@ -4,7 +4,7 @@ import Footer from "@/utility/footer";
 import NavigationBar from "@/utility/navbar";
 import { Montserrat } from "next/font/google";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { FiClock } from "react-icons/fi";
@@ -77,7 +77,7 @@ function formatCountdown(totalSeconds: number) {
   return `${minutes}:${seconds}`;
 }
 
-export default function ConfirmPage() {
+function ConfirmPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -364,5 +364,13 @@ export default function ConfirmPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function ConfirmPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#EFEFEF]" />}>
+      <ConfirmPageContent />
+    </Suspense>
   );
 }

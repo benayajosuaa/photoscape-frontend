@@ -3,7 +3,7 @@
 import Footer from "@/utility/footer";
 import NavigationBar from "@/utility/navbar";
 import { IoArrowBack } from "react-icons/io5";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Montserrat } from "next/font/google";
 
@@ -152,7 +152,7 @@ function getClientAuthToken() {
   return fromStorage || ENV_AUTH_TOKEN;
 }
 
-export default function MethodPage() {
+function MethodPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookingId = searchParams.get("bookingId") || "";
@@ -499,5 +499,13 @@ export default function MethodPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function MethodPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#EFEFEF]" />}>
+      <MethodPageContent />
+    </Suspense>
   );
 }

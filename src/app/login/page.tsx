@@ -3,7 +3,7 @@
 import { Montserrat } from "next/font/google";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, Suspense, useState } from "react";
 import { storeLoginSession } from "@/lib/auth-client";
 import { apiFetchPublic } from "@/lib/api";
 import { clearDashboardAuth, normalizeRole, setAuth } from "@/lib/auth";
@@ -40,7 +40,7 @@ const INTERNAL_ROLE_BY_EMAIL: Record<string, Role> = {
   "owner@photoscape.com": "owner",
 };
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
@@ -198,5 +198,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <LoginPageContent />
+    </Suspense>
   );
 }

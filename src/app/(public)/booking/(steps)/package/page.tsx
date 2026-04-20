@@ -3,7 +3,7 @@
 import Footer from "@/utility/footer";
 import NavigationBar from "@/utility/navbar";
 import { IoArrowBack } from "react-icons/io5";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Montserrat } from "next/font/google";
 import { IoIosArrowRoundForward } from "react-icons/io";
@@ -55,7 +55,7 @@ function formatRupiah(value: number) {
   return new Intl.NumberFormat("id-ID").format(value);
 }
 
-export default function PackagePage() {
+function PackagePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isHydrated, setIsHydrated] = useState(false);
@@ -421,5 +421,13 @@ export default function PackagePage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function PackagePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#EFEFEF]" />}>
+      <PackagePageContent />
+    </Suspense>
   );
 }
