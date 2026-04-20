@@ -2,17 +2,40 @@ import { getToken } from './auth'
 
 const BASE = '/api/proxy'
 
+function unique(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean)))
+}
+
+function normalizeBase(base: string) {
+  return String(base || '').trim().replace(/\/$/, '')
+}
+
 function getBaseCandidates() {
-  return [BASE]
+  const directBackend = normalizeBase(
+    process.env.NEXT_PUBLIC_BACKEND_PUBLIC_URL ||
+      process.env.NEXT_PUBLIC_API_URL ||
+      process.env.NEXT_PUBLIC_BACKEND_URL ||
+      ''
+  )
+
+  return unique([BASE, directBackend])
 }
 
 async function performFetch(path: string, options?: RequestInit) {
   const bases = getBaseCandidates()
   let lastNetworkError: unknown = null
 
-  for (const base of bases) {
+  for (let index = 0; index < bases.length; index += 1) {
+    const base = bases[index]
     try {
       const response = await fetch(`${base}${path}`, options)
+      const hasNextCandidate = index < bases.length - 1
+
+      // If proxy/backend gives 5xx, try next candidate before failing hard.
+      if (response.status >= 500 && hasNextCandidate) {
+        continue
+      }
+
       return response
     } catch (error) {
       lastNetworkError = error
