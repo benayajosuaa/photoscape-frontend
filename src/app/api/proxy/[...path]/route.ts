@@ -28,6 +28,7 @@ async function forward(request: NextRequest, path: string[]) {
   headers.delete("origin");
   headers.delete("referer");
   headers.delete("content-length");
+  headers.delete("accept-encoding");
 
   const method = request.method.toUpperCase();
   const hasBody = method !== "GET" && method !== "HEAD";
@@ -39,10 +40,15 @@ async function forward(request: NextRequest, path: string[]) {
     redirect: "manual",
   });
 
+  const responseHeaders = new Headers(upstream.headers);
+  responseHeaders.delete("content-encoding");
+  responseHeaders.delete("content-length");
+  responseHeaders.delete("transfer-encoding");
+
   return new Response(upstream.body, {
     status: upstream.status,
     statusText: upstream.statusText,
-    headers: upstream.headers,
+    headers: responseHeaders,
   });
 }
 
