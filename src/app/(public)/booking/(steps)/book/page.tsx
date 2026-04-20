@@ -2,7 +2,7 @@
 import Footer from "@/utility/footer";
 import NavigationBar from "@/utility/navbar";
 import { IoIosArrowRoundForward } from "react-icons/io";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Montserrat } from "next/font/google";
 
@@ -24,7 +24,7 @@ type MetaResponse = {
   };
 };
 
-export default function Home() {
+function BookPageContent() {
   const searchParams = useSearchParams();
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -243,5 +243,13 @@ export default function Home() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <BookPageContent />
+    </Suspense>
   );
 }
