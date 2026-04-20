@@ -16,6 +16,11 @@ const monserratFont = Montserrat({
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_PROXY_URL || "/api/proxy";
 const ENV_AUTH_TOKEN = process.env.NEXT_PUBLIC_BOOKING_AUTH_TOKEN || "";
+const PUBLIC_BACKEND_BASE =
+  process.env.NEXT_PUBLIC_BACKEND_PUBLIC_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "";
 
 type PaymentMethod = "qris" | "bca_va" | "mandiri_va" | "gopay" | "ovo";
 
@@ -77,6 +82,34 @@ function formatCountdown(totalSeconds: number) {
   return `${minutes}:${seconds}`;
 }
 
+function toAbsoluteQrTarget(urlValue: string, paymentId: string) {
+  const trimmed = String(urlValue || "").trim();
+
+  const backendBase = PUBLIC_BACKEND_BASE.replace(/\/$/, "");
+  const fallbackPath = `/api/bookings/payments/${paymentId}/qris`;
+
+  if (!trimmed) {
+    return backendBase ? `${backendBase}${fallbackPath}` : fallbackPath;
+  }
+
+  if (trimmed.startsWith("/")) {
+    return backendBase ? `${backendBase}${trimmed}` : trimmed;
+  }
+
+  try {
+    const parsed = new URL(trimmed);
+    const isLocalHost = parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
+
+    if (isLocalHost && backendBase) {
+      return `${backendBase}${parsed.pathname}${parsed.search}`;
+    }
+
+    return parsed.toString();
+  } catch {
+    return backendBase ? `${backendBase}${fallbackPath}` : fallbackPath;
+  }
+}
+
 function ConfirmPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -98,12 +131,8 @@ function ConfirmPageContent() {
   const expiredAt = summary?.payment?.expiredAt || expiredAtFromQuery || null;
 
   const scanQrUrl = useMemo(() => {
-    if (paymentPageUrlFromQuery.includes("/qris")) {
-      return paymentPageUrlFromQuery;
-    }
-
     if (!paymentId) return "";
-    return `${API_BASE_URL}/api/bookings/payments/${paymentId}/qris`;
+    return toAbsoluteQrTarget(paymentPageUrlFromQuery, paymentId);
   }, [paymentId, paymentPageUrlFromQuery]);
 
   const qrImageUrl = useMemo(() => {
