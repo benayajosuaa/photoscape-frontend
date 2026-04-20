@@ -74,13 +74,20 @@ function BookPageContent() {
           method: "GET",
           signal: controller.signal,
         });
-        const json = (await response.json()) as MetaResponse;
+        const raw = await response.text();
+        let json: MetaResponse | null = null;
 
-        if (!response.ok) {
-          throw new Error((json as any)?.message || "Gagal memuat lokasi");
+        try {
+          json = raw ? (JSON.parse(raw) as MetaResponse) : null;
+        } catch {
+          throw new Error(`HTTP ${response.status}: Response API tidak valid`);
         }
 
-        const fetchedLocations = json.data.locations ?? [];
+        if (!response.ok) {
+          throw new Error((json as any)?.message || (json as any)?.error || `HTTP ${response.status}`);
+        }
+
+        const fetchedLocations = json?.data?.locations ?? [];
         setLocations(fetchedLocations);
 
         const queryLocationId = searchParams.get("locationId") || "";

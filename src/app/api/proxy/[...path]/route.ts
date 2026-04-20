@@ -28,7 +28,8 @@ async function forward(request: NextRequest, path: string[]) {
   headers.delete("origin");
   headers.delete("referer");
   headers.delete("content-length");
-  headers.delete("accept-encoding");
+  // Force upstream to return uncompressed payload to avoid double-decoding issues.
+  headers.set("accept-encoding", "identity");
 
   const method = request.method.toUpperCase();
   const hasBody = method !== "GET" && method !== "HEAD";
@@ -40,12 +41,13 @@ async function forward(request: NextRequest, path: string[]) {
     redirect: "manual",
   });
 
+  const rawBody = await upstream.arrayBuffer();
   const responseHeaders = new Headers(upstream.headers);
   responseHeaders.delete("content-encoding");
   responseHeaders.delete("content-length");
   responseHeaders.delete("transfer-encoding");
 
-  return new Response(upstream.body, {
+  return new Response(rawBody, {
     status: upstream.status,
     statusText: upstream.statusText,
     headers: responseHeaders,
