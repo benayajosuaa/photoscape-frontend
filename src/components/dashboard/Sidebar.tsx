@@ -8,7 +8,6 @@ import {
   MdCalendarToday,
   MdDashboard,
   MdHistory,
-  MdManageAccounts,
   MdPayment,
   MdQrCodeScanner,
   MdSettings,
@@ -43,7 +42,6 @@ const navItems: NavItem[] = [
   { label: 'Activity Log', href: '/dashboard/manager/logs', icon: MdHistory, roles: ['manager'] },
   { label: 'Laporan', href: '/dashboard/reports', icon: MdBarChart, roles: ['owner'] },
   { label: 'Activity Log', href: '/dashboard/logs', icon: MdHistory, roles: ['owner'] },
-  { label: 'Manajemen Staff', href: '/dashboard/staff', icon: MdManageAccounts, roles: ['owner'] },
   { label: 'Pengaturan', href: '/dashboard/settings', icon: MdSettings, roles: ['owner'] },
 ]
 

@@ -152,11 +152,11 @@ export default function BookingsPage() {
             async () => {
               await apiFetch(`/api/bookings/${bookingId}/reschedule`, {
                 method: 'PUT',
-                body: JSON.stringify({ startTime: `${date}T${time}:00+07:00`, reason }),
+                body: JSON.stringify({ startTime: `${date}T${time}:00.000Z`, reason }),
               }).catch(() =>
                 apiFetch(`/api/admin/bookings/${bookingId}/reschedule`, {
                   method: 'PATCH',
-                  body: JSON.stringify({ startTime: `${date}T${time}:00+07:00`, reason }),
+                  body: JSON.stringify({ startTime: `${date}T${time}:00.000Z`, reason }),
                 }),
               )
               setRescheduleOpen(false)

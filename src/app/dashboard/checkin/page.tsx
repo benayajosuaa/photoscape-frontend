@@ -34,7 +34,8 @@ function parseBookingCode(raw: string) {
   const value = raw.trim()
   if (!value) return ''
   if (value.startsWith(QR_PREFIX)) {
-    return value.replace(QR_PREFIX, '').trim()
+    const payload = value.replace(QR_PREFIX, '').trim()
+    return payload.split('|')[0]?.trim() || ''
   }
   return value
 }

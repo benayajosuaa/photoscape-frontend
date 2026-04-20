@@ -8,50 +8,24 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Montserrat } from "next/font/google";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { FiPlus, FiCheck } from "react-icons/fi";
+import {
+  fetchPublicBookingMeta,
+  type PublicBookingAddOn,
+  type PublicBookingLocation,
+  type PublicBookingPackage,
+  type PublicBookingStudio,
+} from "@/lib/booking-public";
 
 const monserratFont = Montserrat({
   subsets: ["latin"],
   weight: "500",
 });
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
-
 type PackageType = "studio" | "photobox" | "selfphoto";
-
-type BookingLocation = {
-  id: string;
-  name: string;
-};
-
-type BookingPackage = {
-  id: string;
-  name: string;
-  price: number;
-  durationMinutes: number;
-  maxCapacity: number;
-};
-
-type BookingAddOn = {
-  id: string;
-  name: string;
-  price: number;
-};
-
-type BookingStudio = {
-  id: string;
-  name: string;
-  type: string;
-  capacity: number;
-};
-
-type MetaResponse = {
-  data: {
-    locations: BookingLocation[];
-    studios: BookingStudio[];
-    packages: BookingPackage[];
-    addOns: BookingAddOn[];
-  };
-};
+type BookingLocation = PublicBookingLocation;
+type BookingPackage = PublicBookingPackage;
+type BookingAddOn = PublicBookingAddOn;
+type BookingStudio = PublicBookingStudio;
 
 const TAB_TO_STUDIO_TYPE: Record<PackageType, string[]> = {
   studio: ["K1", "K2"],
@@ -107,35 +81,31 @@ export default function PackagePage() {
     setIsHydrated(true);
   }, []);
 
+  const studiosForLocation = useMemo(
+    () =>
+      selectedLocationId
+        ? studios.filter(studio => studio.locationId === selectedLocationId)
+        : studios,
+    [studios, selectedLocationId]
+  );
+
   const availableStudioTypes = useMemo(() => {
     const allowedTypes = TAB_TO_STUDIO_TYPE[activeTab];
-    const fromBackend = [...new Set(studios.map(item => item.type))];
+    const fromBackend = [...new Set(studiosForLocation.map(item => item.type))];
     return allowedTypes.filter(type => fromBackend.includes(type));
-  }, [activeTab, studios]);
+  }, [activeTab, studiosForLocation]);
 
   useEffect(() => {
-    const controller = new AbortController();
-
     const loadMeta = async () => {
       setIsLoading(true);
       setErrorMessage(null);
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/bookings/meta`, {
-          method: "GET",
-          signal: controller.signal,
-        });
-
-        const json = (await response.json()) as MetaResponse;
-
-        if (!response.ok) {
-          throw new Error((json as any)?.message || "Gagal memuat data booking");
-        }
-
-        const fetchedLocations = json.data.locations ?? [];
-        const fetchedStudios = json.data.studios ?? [];
-        const fetchedPackages = json.data.packages ?? [];
-        const fetchedAddOns = json.data.addOns ?? [];
+        const meta = await fetchPublicBookingMeta();
+        const fetchedLocations = meta.locations ?? [];
+        const fetchedStudios = meta.studios ?? [];
+        const fetchedPackages = meta.packages ?? [];
+        const fetchedAddOns = meta.addOns ?? [];
 
         setLocations(fetchedLocations);
         setStudios(fetchedStudios);
@@ -185,17 +155,13 @@ export default function PackagePage() {
           setActiveTab("studio");
         }
       } catch (error: any) {
-        if (error.name !== "AbortError") {
-          setErrorMessage(error.message || "Gagal memuat data booking");
-        }
+        setErrorMessage(error.message || "Gagal memuat data booking");
       } finally {
         setIsLoading(false);
       }
     };
 
     void loadMeta();
-
-    return () => controller.abort();
   }, [searchParams]);
 
   useEffect(() => {

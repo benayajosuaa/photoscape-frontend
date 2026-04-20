@@ -7,14 +7,19 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import { IoIosArrowRoundForward } from "react-icons/io";
+import {
+  fetchPublicBookingAvailability,
+  fetchPublicBookingMeta,
+  type PublicBookingLocation,
+  type PublicBookingPackage,
+  type PublicBookingSlot,
+  type PublicBookingStudio,
+} from "@/lib/booking-public";
 
 const monserratFont = Montserrat({
   subsets: ["latin"],
   weight: "500",
 });
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
-const AUTO_JUMP_SEARCH_DAYS = 30;
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTH_NAMES = [
@@ -31,57 +36,13 @@ const MONTH_NAMES = [
   "November",
   "December",
 ];
+const AUTO_JUMP_SEARCH_DAYS = 14;
+const AUTO_JUMP_BATCH_SIZE = 4;
 
-type Location = {
-  id: string;
-  name: string;
-};
-
-type BookingPackage = {
-  id: string;
-  name: string;
-  durationMinutes: number;
-  price: number;
-  maxCapacity: number;
-};
-
-type Studio = {
-  id: string;
-  name: string;
-  type: string;
-  capacity: number;
-};
-
-type Slot = {
-  scheduleId: string;
-  studioId: string;
-  studioName: string;
-  studioType: string;
-  startTime: string;
-  endTime: string;
-  status: "available" | "unavailable";
-  reason: string | null;
-};
-
-type BookingMetaResponse = {
-  data: {
-    locations: Location[];
-    studios: Studio[];
-    packages: BookingPackage[];
-  };
-};
-
-type AvailabilityResponse = {
-  data: {
-    location: Location;
-    date: string;
-    package: BookingPackage;
-    studioType: string | null;
-    studios: Studio[];
-    slots: Slot[];
-    availableSlots: Slot[];
-  };
-};
+type Location = PublicBookingLocation;
+type BookingPackage = PublicBookingPackage;
+type Studio = PublicBookingStudio;
+type Slot = PublicBookingSlot;
 
 function toDateOnlyString(date: Date) {
   const year = date.getFullYear();
@@ -152,36 +113,31 @@ export default function SchedulePage() {
     [slots, selectedSlotId]
   );
 
-  const selectedStudioName = useMemo(() => {
-    if (selectedSlot) return selectedSlot.studioName;
-    const matching = studios.find(studio => studio.type === selectedStudioType);
-    return matching?.name ?? "Studio";
-  }, [selectedSlot, studios, selectedStudioType]);
+  const studiosForLocation = useMemo(
+    () =>
+      selectedLocationId
+        ? studios.filter(studio => studio.locationId === selectedLocationId)
+        : studios,
+    [studios, selectedLocationId]
+  );
+
+  const availableStudioTypes = useMemo(
+    () => [...new Set(studiosForLocation.map(studio => studio.type))],
+    [studiosForLocation]
+  );
 
   const calendarCells = useMemo(() => buildCalendarCells(monthCursor), [monthCursor]);
 
   useEffect(() => {
-    const controller = new AbortController();
-
     const loadMeta = async () => {
       setMetaLoading(true);
       setErrorMessage(null);
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/bookings/meta`, {
-          method: "GET",
-          signal: controller.signal,
-        });
-
-        const json = (await response.json()) as BookingMetaResponse;
-
-        if (!response.ok) {
-          throw new Error((json as any)?.message || "Gagal memuat data booking");
-        }
-
-        const fetchedLocations = json.data.locations ?? [];
-        const fetchedPackages = json.data.packages ?? [];
-        const fetchedStudios = json.data.studios ?? [];
+        const meta = await fetchPublicBookingMeta();
+        const fetchedLocations = meta.locations ?? [];
+        const fetchedPackages = meta.packages ?? [];
+        const fetchedStudios = meta.studios ?? [];
 
         setLocations(fetchedLocations);
         setPackages(fetchedPackages);
@@ -205,26 +161,27 @@ export default function SchedulePage() {
         const resolvedPackageId =
           fetchedPackages.find(item => item.id === queryPackageId)?.id || fetchedPackages[0]?.id || "";
 
+        const studiosInLocation = fetchedStudios.filter(
+          studio => studio.locationId === resolvedLocationId
+        );
+        const studioCandidates = studiosInLocation.length ? studiosInLocation : fetchedStudios;
+
         const resolvedStudioType =
-          fetchedStudios.find(studio => studio.type === queryStudioType)?.type ||
-          fetchedStudios[0]?.type ||
+          studioCandidates.find(studio => studio.type === queryStudioType)?.type ||
+          studioCandidates[0]?.type ||
           "";
 
         setSelectedLocationId(resolvedLocationId);
         setSelectedPackageId(resolvedPackageId);
         setSelectedStudioType(resolvedStudioType);
       } catch (error: any) {
-        if (error.name !== "AbortError") {
-          setErrorMessage(error.message || "Gagal memuat data awal booking");
-        }
+        setErrorMessage(error.message || "Gagal memuat data awal booking");
       } finally {
         setMetaLoading(false);
       }
     };
 
     void loadMeta();
-
-    return () => controller.abort();
   }, [searchParams]);
 
   useEffect(() => {
@@ -232,47 +189,45 @@ export default function SchedulePage() {
       return;
     }
 
-    const controller = new AbortController();
+    let active = true;
 
-    const fetchSlotsForDate = async (targetDate: Date) => {
-      const query = new URLSearchParams({
-        locationId: selectedLocationId,
-        packageId: selectedPackageId,
-        studioType: selectedStudioType,
-        date: toDateOnlyString(targetDate),
-      });
-
-      const response = await fetch(`${API_BASE_URL}/api/bookings/availability?${query.toString()}`, {
-        method: "GET",
-        signal: controller.signal,
-      });
-
-      const json = (await response.json()) as AvailabilityResponse;
-
-      if (!response.ok) {
-        throw new Error((json as any)?.message || "Gagal memuat slot waktu");
-      }
-
-      const fetchedSlots = (json.data.slots ?? []).sort((a, b) => {
+    const sortSlots = (inputSlots: Slot[]) =>
+      [...inputSlots].sort((a, b) => {
         const aTime = new Date(a.startTime).getTime();
         const bTime = new Date(b.startTime).getTime();
         return aTime - bTime;
       });
 
-      return fetchedSlots;
-    };
+    const findNearestDateWithAvailableSlot = async (baseParams: {
+      locationId: string;
+      packageId: string;
+      studioType: string;
+      date: string;
+    }) => {
+      for (let offset = 1; offset <= AUTO_JUMP_SEARCH_DAYS; offset += AUTO_JUMP_BATCH_SIZE) {
+        const batchDates = Array.from({ length: AUTO_JUMP_BATCH_SIZE }, (_, index) => offset + index)
+          .filter(delta => delta <= AUTO_JUMP_SEARCH_DAYS)
+          .map(delta => addDays(selectedDate, delta));
 
-    const findNearestAvailableFutureDate = async (baseDate: Date) => {
-      for (let offset = 1; offset <= AUTO_JUMP_SEARCH_DAYS; offset += 1) {
-        const candidateDate = addDays(baseDate, offset);
-        const candidateSlots = await fetchSlotsForDate(candidateDate);
-        const hasAvailableSlot = candidateSlots.some(slot => slot.status === "available");
+        const batchResults = await Promise.all(
+          batchDates.map(async date => {
+            const nextAvailability = await fetchPublicBookingAvailability({
+              ...baseParams,
+              date: toDateOnlyString(date),
+            });
+            const nextSlots = sortSlots(nextAvailability.slots ?? []);
 
-        if (hasAvailableSlot) {
-          return {
-            date: candidateDate,
-            slots: candidateSlots,
-          };
+            return {
+              date,
+              slots: nextSlots,
+              hasAvailableSlot: nextSlots.some(slot => slot.status === "available"),
+            };
+          })
+        );
+
+        const nearestInBatch = batchResults.find(item => item.hasAvailableSlot);
+        if (nearestInBatch) {
+          return nearestInBatch;
         }
       }
 
@@ -285,38 +240,88 @@ export default function SchedulePage() {
       setSelectedSlotId("");
 
       try {
-        const fetchedSlots = await fetchSlotsForDate(selectedDate);
-        const hasAvailableSlot = fetchedSlots.some(slot => slot.status === "available");
+        const params = {
+          locationId: selectedLocationId,
+          packageId: selectedPackageId,
+          studioType: selectedStudioType,
+          date: toDateOnlyString(selectedDate),
+        };
 
-        if (hasAvailableSlot) {
+        const availability = await fetchPublicBookingAvailability(params);
+        const fetchedSlots = sortSlots(availability.slots ?? []);
+        if (!active) return;
+
+        if (fetchedSlots.some(slot => slot.status === "available")) {
           setSlots(fetchedSlots);
           return;
         }
 
-        const nearestWithSlot = await findNearestAvailableFutureDate(selectedDate);
+        const alternativeStudioTypes = availableStudioTypes.filter(type => type !== selectedStudioType);
+        if (alternativeStudioTypes.length > 0) {
+          const alternativeResults = await Promise.all(
+            alternativeStudioTypes.map(async studioType => {
+              const altAvailability = await fetchPublicBookingAvailability({
+                ...params,
+                studioType,
+              });
+              const altSlots = sortSlots(altAvailability.slots ?? []);
+              return {
+                studioType,
+                slots: altSlots,
+                hasAvailableSlot: altSlots.some(slot => slot.status === "available"),
+              };
+            })
+          );
 
-        if (nearestWithSlot) {
-          setSelectedDate(nearestWithSlot.date);
-          setMonthCursor(nearestWithSlot.date);
-          setSlots(nearestWithSlot.slots);
+          if (!active) return;
+
+          const bestAlternative = alternativeResults.find(item => item.hasAvailableSlot);
+          if (bestAlternative) {
+            setSelectedStudioType(bestAlternative.studioType);
+            setSlots(bestAlternative.slots);
+            return;
+          }
+        }
+
+        const nearest = await findNearestDateWithAvailableSlot(params);
+        if (!active) return;
+
+        if (nearest) {
+          setSelectedDate(nearest.date);
+          setMonthCursor(nearest.date);
+          setSlots(nearest.slots);
           return;
         }
 
         setSlots(fetchedSlots);
       } catch (error: any) {
-        if (error.name !== "AbortError") {
-          setErrorMessage(error.message || "Gagal memuat slot waktu");
-          setSlots([]);
-        }
+        if (!active) return;
+        setErrorMessage(error.message || "Gagal memuat slot waktu");
+        setSlots([]);
       } finally {
-        setAvailabilityLoading(false);
+        if (active) {
+          setAvailabilityLoading(false);
+        }
       }
     };
 
     void loadAvailability();
 
-    return () => controller.abort();
-  }, [selectedLocationId, selectedPackageId, selectedStudioType, selectedDate]);
+    return () => {
+      active = false;
+    };
+  }, [selectedLocationId, selectedPackageId, selectedStudioType, selectedDate, availableStudioTypes]);
+
+  useEffect(() => {
+    if (availableStudioTypes.length === 0) {
+      setSelectedStudioType("");
+      return;
+    }
+
+    if (!availableStudioTypes.includes(selectedStudioType)) {
+      setSelectedStudioType(availableStudioTypes[0] || "");
+    }
+  }, [availableStudioTypes, selectedStudioType]);
 
   const handleMonthNavigation = (direction: "prev" | "next") => {
     const next = new Date(monthCursor);
@@ -467,7 +472,7 @@ export default function SchedulePage() {
                   onChange={event => setSelectedStudioType(event.target.value)}
                   className="min-w-[#220] rounded-xl border border-[#dec6d2] bg-white px-4 py-3 text-xl"
                 >
-                  {[...new Set(studios.map(studio => studio.type))].map(type => (
+                  {availableStudioTypes.map(type => (
                     <option key={type} value={type}>
                       {type}
                     </option>

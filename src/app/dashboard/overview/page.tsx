@@ -20,6 +20,10 @@ interface SummaryResponse {
     summary?: {
       totalBookings?: number
       totalRevenuePaid?: number
+      bookingTrend?: Array<{
+        label?: string
+        value?: number
+      }>
       studioUsage?: {
         utilizationRate?: number
       }
@@ -129,7 +133,13 @@ export default function DashboardOverviewPage() {
                 cancellationRate:
                   (summaryData as { summary?: { cancellations?: { rate?: number } } }).summary?.cancellations?.rate || 0,
                 lastMonthRevenue: 0,
-                bookingTrend: [],
+                bookingTrend:
+                  (summaryData as { summary?: { bookingTrend?: Array<{ label?: string; value?: number }> } }).summary?.bookingTrend?.map(
+                    (item) => ({
+                      label: item.label || '-',
+                      value: Number(item.value || 0),
+                    }),
+                  ) || [],
               }
             : {
                 ...(flatSummary || {}),
