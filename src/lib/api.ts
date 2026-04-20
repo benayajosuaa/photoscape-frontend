@@ -1,33 +1,9 @@
 import { getToken } from './auth'
 
-const BASE = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || ''
-
-function unique(values: string[]) {
-  return Array.from(new Set(values.filter(Boolean)))
-}
-
-function withFallbackPort(base: string, fallbackPort: string) {
-  try {
-    const url = new URL(base)
-    if (url.hostname !== 'localhost' && url.hostname !== '127.0.0.1') return ''
-    url.port = fallbackPort
-    return url.toString().replace(/\/$/, '')
-  } catch {
-    return ''
-  }
-}
+const BASE = '/api/proxy'
 
 function getBaseCandidates() {
-  const bases = unique([
-    BASE,
-    process.env.NEXT_PUBLIC_API_URL || '',
-    process.env.NEXT_PUBLIC_BACKEND_URL || '',
-    'http://localhost:8080',
-    'http://localhost:3001',
-  ])
-
-  const fallbacks = bases.flatMap((base) => [withFallbackPort(base, '8080'), withFallbackPort(base, '3001')])
-  return unique([...bases, ...fallbacks])
+  return [BASE]
 }
 
 async function performFetch(path: string, options?: RequestInit) {

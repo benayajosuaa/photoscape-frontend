@@ -14,7 +14,7 @@ const monserratFont = Montserrat({
   weight: "500",
 });
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_PROXY_URL || "/api/proxy";
 const ENV_AUTH_TOKEN = process.env.NEXT_PUBLIC_BOOKING_AUTH_TOKEN || "";
 
 type PaymentMethod = "qris" | "bca_va" | "mandiri_va" | "gopay" | "ovo";

@@ -11,7 +11,7 @@ const monserratFont = Montserrat({
   weight: "500",
 });
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_PROXY_URL || "/api/proxy";
 
 type Location = {
   id: string;
