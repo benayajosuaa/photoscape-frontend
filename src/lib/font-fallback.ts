@@ -1,28 +1,30 @@
-type FontOptions = {
-  variable?: string;
-  [key: string]: unknown;
-};
+import {
+  Geist as NextGeist,
+  Geist_Mono as NextGeistMono,
+  Montserrat as NextMontserrat,
+} from "next/font/google";
 
-type FontResult = {
-  className: string;
-  variable: string;
-};
+type MontserratOptions = Parameters<typeof NextMontserrat>[0];
+type GeistOptions = Parameters<typeof NextGeist>[0];
+type GeistMonoOptions = Parameters<typeof NextGeistMono>[0];
 
-function makeFontResult(options?: FontOptions): FontResult {
-  return {
-    className: "",
-    variable: options?.variable ?? "",
-  };
+export function Montserrat(options?: MontserratOptions) {
+  return NextMontserrat({
+    subsets: ["latin"],
+    ...options,
+  });
 }
 
-export function Montserrat(_options?: unknown): FontResult {
-  return makeFontResult();
+export function Geist(options?: GeistOptions) {
+  return NextGeist({
+    subsets: ["latin"],
+    ...options,
+  });
 }
 
-export function Geist(options?: FontOptions): FontResult {
-  return makeFontResult(options);
-}
-
-export function Geist_Mono(options?: FontOptions): FontResult {
-  return makeFontResult(options);
+export function Geist_Mono(options?: GeistMonoOptions) {
+  return NextGeistMono({
+    subsets: ["latin"],
+    ...options,
+  });
 }
