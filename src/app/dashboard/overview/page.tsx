@@ -16,8 +16,31 @@ import { formatRupiah } from '@/lib/utils'
 import type { Booking, DashboardSummary, ScheduleSlot, Transaction } from '@/types'
 
 interface SummaryResponse {
-  success: boolean
-  data?: DashboardSummary
+  data?: DashboardSummary | {
+    summary?: {
+      totalBookings?: number
+      totalRevenuePaid?: number
+      studioUsage?: {
+        utilizationRate?: number
+      }
+      cancellations?: {
+        rate?: number
+      }
+    }
+  }
+}
+
+type OverviewTransaction = Pick<Transaction, 'id' | 'amount'> & { transactionCode: string }
+
+interface OwnerTransactionsResponse {
+  data?: Transaction[] | {
+    transactions?: Array<{
+      id?: string
+      amount?: number
+      invoice?: string
+      bookingCode?: string
+    }>
+  }
 }
 
 function toUtcDateKey(iso?: string) {
@@ -40,7 +63,7 @@ export default function DashboardOverviewPage() {
   })
   const [bookings, setBookings] = useState<Booking[]>([])
   const [schedules, setSchedules] = useState<ScheduleSlot[]>([])
-  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [transactions, setTransactions] = useState<OverviewTransaction[]>([])
 
   useEffect(() => {
     if (!user) return
@@ -67,7 +90,7 @@ export default function DashboardOverviewPage() {
 
         const transactionsPromise =
           user.role === 'owner'
-            ? apiFetch<{ data: Transaction[] }>('/api/transactions?limit=10&page=1').catch(() =>
+            ? apiFetch<OwnerTransactionsResponse>('/api/transactions?limit=10&page=1').catch(() =>
                 Promise.resolve({ data: [] as Transaction[] }),
               )
             : Promise.resolve({ data: [] as Transaction[] })
@@ -88,18 +111,57 @@ export default function DashboardOverviewPage() {
 
         const [transactionsRes] = await Promise.all([transactionsPromise])
 
-        setSummary(
-          summaryRes.data || {
-            totalBookings: 0,
-            pendingBookings: 0,
-            activeWalkins: 0,
-            needConfirmation: 0,
-            bookingTrend: [],
-          },
-        )
+        const summaryData = summaryRes.data
+        const isNestedSummary = Boolean(summaryData && 'summary' in summaryData)
+        const flatSummary = !isNestedSummary ? (summaryData as DashboardSummary | undefined) : undefined
+        const normalizedSummary: DashboardSummary =
+          isNestedSummary
+            ? {
+                totalBookings: (summaryData as { summary?: { totalBookings?: number } }).summary?.totalBookings || 0,
+                pendingBookings: 0,
+                activeWalkins: 0,
+                needConfirmation: 0,
+                monthlyBookings: (summaryData as { summary?: { totalBookings?: number } }).summary?.totalBookings || 0,
+                monthlyRevenue: (summaryData as { summary?: { totalRevenuePaid?: number } }).summary?.totalRevenuePaid || 0,
+                utilizationRate:
+                  (summaryData as { summary?: { studioUsage?: { utilizationRate?: number } } }).summary?.studioUsage
+                    ?.utilizationRate || 0,
+                cancellationRate:
+                  (summaryData as { summary?: { cancellations?: { rate?: number } } }).summary?.cancellations?.rate || 0,
+                lastMonthRevenue: 0,
+                bookingTrend: [],
+              }
+            : {
+                ...(flatSummary || {}),
+                totalBookings: flatSummary?.totalBookings || 0,
+                pendingBookings: flatSummary?.pendingBookings || 0,
+                activeWalkins: flatSummary?.activeWalkins || 0,
+                needConfirmation: flatSummary?.needConfirmation || 0,
+                bookingTrend: flatSummary?.bookingTrend || [],
+              }
+
+        const normalizedTransactions: OverviewTransaction[] = Array.isArray(transactionsRes.data)
+          ? transactionsRes.data
+              .filter((tx): tx is Transaction => Boolean(tx?.id))
+              .map((tx) => ({
+                id: tx.id,
+                amount: tx.amount || 0,
+                transactionCode: tx.transactionCode || tx.id,
+              }))
+          : Array.isArray(transactionsRes.data?.transactions)
+            ? transactionsRes.data.transactions
+                .filter((tx): tx is { id: string; amount?: number; invoice?: string; bookingCode?: string } => Boolean(tx?.id))
+                .map((tx) => ({
+                  id: tx.id,
+                  amount: tx.amount || 0,
+                  transactionCode: tx.invoice || tx.bookingCode || tx.id,
+                }))
+            : []
+
+        setSummary(normalizedSummary)
         setBookings(normalizedBookings)
         setSchedules(buildStudioTimelineFromBookings(todayBookings, today))
-        setTransactions(transactionsRes.data || [])
+        setTransactions(normalizedTransactions)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Gagal memuat data dashboard')
       } finally {
@@ -137,6 +199,8 @@ export default function DashboardOverviewPage() {
     ]
   }, [summary, user])
 
+  const safeTransactions = Array.isArray(transactions) ? transactions : []
+
   if (!user) return null
 
   return (
@@ -164,8 +228,8 @@ export default function DashboardOverviewPage() {
       {user.role === 'owner' ? (
         <Card title="Transaksi Terbaru">
           <div className="space-y-2">
-            {transactions.length === 0 ? <p className="text-sm text-gray-500">Belum ada transaksi terbaru.</p> : null}
-            {transactions.map((tx) => (
+            {safeTransactions.length === 0 ? <p className="text-sm text-gray-500">Belum ada transaksi terbaru.</p> : null}
+            {safeTransactions.map((tx) => (
               <div key={tx.id} className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm">
                 <span>{tx.transactionCode}</span>
                 <span className="font-medium text-gray-900">{formatRupiah(tx.amount)}</span>

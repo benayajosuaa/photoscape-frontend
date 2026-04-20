@@ -42,8 +42,15 @@ export default function LogsPage() {
     )
     setItems(res.data || [])
 
-    const usersRes = await apiFetch<{ data: User[] }>('/api/users?role=staff').catch(() => Promise.resolve({ data: [] }))
-    setUsers(usersRes.data || [])
+    const usersRes = await apiFetch<{ data?: User[] | { users?: User[] } }>('/api/users?role=staff').catch(() =>
+      Promise.resolve({ data: [] as User[] }),
+    )
+    const normalizedUsers = Array.isArray(usersRes.data)
+      ? usersRes.data
+      : Array.isArray(usersRes.data?.users)
+        ? usersRes.data.users
+        : []
+    setUsers(normalizedUsers)
   }
 
   useEffect(() => {
@@ -53,6 +60,8 @@ export default function LogsPage() {
   }, [tab, user])
 
   if (!user || user.role === 'staff') return null
+
+  const safeUsers = Array.isArray(users) ? users : []
 
   return (
     <div className="space-y-4">
@@ -72,7 +81,7 @@ export default function LogsPage() {
           <Select
             value={userId}
             onChange={(event) => setUserId(event.target.value)}
-            options={[{ label: 'Semua staff', value: '' }, ...users.map((item) => ({ label: item.name, value: item.id }))]}
+            options={[{ label: 'Semua staff', value: '' }, ...safeUsers.map((item) => ({ label: item.name, value: item.id }))]}
           />
           <Input placeholder="Aksi (booking.cancel)" value={action} onChange={(event) => setAction(event.target.value)} />
           <Input type="date" value={dateFrom} onChange={(event) => setDateFrom(event.target.value)} />

@@ -12,6 +12,19 @@ import { useAuth } from '@/hooks/useAuth'
 import { apiFetch } from '@/lib/api'
 import { formatRupiah } from '@/lib/utils'
 
+function normalizeRows(data: unknown): Record<string, unknown>[] {
+  if (Array.isArray(data)) return data as Record<string, unknown>[]
+  if (!data || typeof data !== 'object') return []
+
+  const candidates = ['bookings', 'revenue', 'studios', 'payments', 'trend', 'byStudio', 'rows', 'data']
+  for (const key of candidates) {
+    const value = (data as Record<string, unknown>)[key]
+    if (Array.isArray(value)) return value as Record<string, unknown>[]
+  }
+
+  return []
+}
+
 export default function ReportsPage() {
   const router = useRouter()
   const { user } = useAuth({ requireAuth: true })
@@ -27,24 +40,24 @@ export default function ReportsPage() {
 
   const load = async () => {
     if (tab === 'booking') {
-      const res = await apiFetch<{ data: Record<string, unknown>[] }>(
+      const res = await apiFetch<{ data?: unknown }>(
         `/api/reports/bookings?dateFrom=${dateFrom}&dateTo=${dateTo}`,
-      ).catch(() => apiFetch<{ data: Record<string, unknown>[] }>(`/api/admin/reports/bookings?dateFrom=${dateFrom}&dateTo=${dateTo}`))
-      setRows(res.data || [])
+      ).catch(() => apiFetch<{ data?: unknown }>(`/api/admin/reports/bookings?dateFrom=${dateFrom}&dateTo=${dateTo}`))
+      setRows(normalizeRows(res.data))
     }
 
     if (tab === 'finance') {
-      const res = await apiFetch<{ data: Record<string, unknown>[] }>(
+      const res = await apiFetch<{ data?: unknown }>(
         `/api/reports/revenue?dateFrom=${dateFrom}&dateTo=${dateTo}&method=${method}`,
-      ).catch(() => apiFetch<{ data: Record<string, unknown>[] }>(`/api/admin/reports/payments?dateFrom=${dateFrom}&dateTo=${dateTo}`))
-      setRows(res.data || [])
+      ).catch(() => apiFetch<{ data?: unknown }>(`/api/admin/reports/payments?dateFrom=${dateFrom}&dateTo=${dateTo}`))
+      setRows(normalizeRows(res.data))
     }
 
     if (tab === 'usage') {
-      const res = await apiFetch<{ data: Record<string, unknown>[] }>(
+      const res = await apiFetch<{ data?: unknown }>(
         `/api/reports/studio-usage?dateFrom=${dateFrom}&dateTo=${dateTo}`,
-      ).catch(() => apiFetch<{ data: Record<string, unknown>[] }>(`/api/admin/reports/studio-usage?dateFrom=${dateFrom}&dateTo=${dateTo}`))
-      setRows(res.data || [])
+      ).catch(() => apiFetch<{ data?: unknown }>(`/api/admin/reports/studio-usage?dateFrom=${dateFrom}&dateTo=${dateTo}`))
+      setRows(normalizeRows(res.data))
     }
   }
 
@@ -54,6 +67,7 @@ export default function ReportsPage() {
   }, [tab, user])
 
   if (!user || user.role === 'staff') return null
+  const safeRows = Array.isArray(rows) ? rows : []
 
   return (
     <div className="space-y-4">
@@ -94,14 +108,17 @@ export default function ReportsPage() {
       {tab === 'finance' ? (
         <SimpleBarChart
           title="Revenue Harian"
-          data={rows.slice(0, 7).map((row, index) => ({ label: String(row.date || `D${index + 1}`), value: Number(row.total || 0) }))}
+          data={safeRows.slice(0, 7).map((row, index) => ({
+            label: String(row.date || row.periodLabel || row.createdAt || `D${index + 1}`),
+            value: Number(row.total || row.totalAmount || row.paidAmount || row.amount || 0),
+          }))}
         />
       ) : null}
 
       <Card>
         <Table
-          data={rows}
-          columns={Object.keys(rows[0] || { message: 'no_data' }).map((key) => ({
+          data={safeRows}
+          columns={Object.keys(safeRows[0] || { message: 'no_data' }).map((key) => ({
             key,
             label: key,
             render: (item: Record<string, unknown>) => {

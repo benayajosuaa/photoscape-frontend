@@ -71,6 +71,7 @@ export const bookingStatusLabel: Record<BookingStatus, string> = {
   confirmed: 'Terkonfirmasi',
   completed: 'Selesai',
   cancelled: 'Dibatalkan',
+  expired: 'Kadaluarsa',
 }
 
 export const bookingStatusColor: Record<BookingStatus, string> = {
@@ -78,6 +79,7 @@ export const bookingStatusColor: Record<BookingStatus, string> = {
   confirmed: 'bg-blue-100 text-blue-800',
   completed: 'bg-green-100 text-green-800',
   cancelled: 'bg-red-100 text-red-800',
+  expired: 'bg-gray-100 text-gray-600',
 }
 
 export const paymentStatusLabel: Record<PaymentStatus, string> = {

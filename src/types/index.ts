@@ -1,7 +1,7 @@
-export type Role = 'customer' | 'staff' | 'manager' | 'owner'
-export type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled'
+export type Role = 'customer' | 'staff' | 'manager' | 'owner' | 'cashier'
+export type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'expired'
 export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'expired'
-export type PaymentMethod = 'cash' | 'qris' | 'va' | 'transfer'
+export type PaymentMethod = 'cash' | 'qris' | 'bca_va' | 'mandiri_va' | 'gopay' | 'ovo'
 
 export interface User {
   id: string

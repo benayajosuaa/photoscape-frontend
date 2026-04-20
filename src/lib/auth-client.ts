@@ -16,6 +16,7 @@ export type AuthUser = {
 
 type LoginResponse = {
   token: string;
+  refreshToken?: string;
   user: AuthUser;
 };
 
@@ -48,6 +49,9 @@ export function storeLoginSession(data: LoginResponse) {
   if (typeof window === "undefined") return;
 
   window.localStorage.setItem("authToken", data.token);
+  if (data.refreshToken) {
+    window.localStorage.setItem("refreshToken", data.refreshToken);
+  }
   window.localStorage.setItem("authUser", JSON.stringify(data.user));
 }
 
@@ -58,6 +62,7 @@ export function clearLoginSession() {
   window.localStorage.removeItem("token");
   window.localStorage.removeItem("accessToken");
   window.localStorage.removeItem("authUser");
+  window.localStorage.removeItem("refreshToken");
 }
 
 export function getFirstName(name: string | undefined) {
@@ -66,4 +71,3 @@ export function getFirstName(name: string | undefined) {
   if (!trimmed) return "User";
   return trimmed.split(/\s+/)[0];
 }
-

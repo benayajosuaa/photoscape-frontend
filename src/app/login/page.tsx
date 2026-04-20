@@ -4,7 +4,8 @@ import { Montserrat } from "next/font/google";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { API_BASE_URL, storeLoginSession } from "@/lib/auth-client";
+import { storeLoginSession } from "@/lib/auth-client";
+import { apiFetchPublic } from "@/lib/api";
 import { clearDashboardAuth, normalizeRole, setAuth } from "@/lib/auth";
 import type { Role } from "@/types";
 
@@ -15,6 +16,7 @@ const monserratFont = Montserrat({
 
 type LoginResponse = {
   token?: string;
+  refreshToken?: string;
   user?: {
     id: string;
     name: string;
@@ -27,6 +29,7 @@ type LoginResponse = {
     } | null;
   };
   error?: string;
+  message?: string;
 };
 
 const INTERNAL_ROLE_BY_EMAIL: Record<string, Role> = {
@@ -53,7 +56,7 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      const json = await apiFetchPublic<LoginResponse>("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,12 +66,7 @@ export default function LoginPage() {
           password,
         }),
       });
-
-      const json = (await response.json()) as LoginResponse;
-
-      if (!response.ok || !json.token || !json.user) {
-        throw new Error(json.error || "Login gagal");
-      }
+      if (!json.token || !json.user) throw new Error(json.error || json.message || "Login gagal");
 
       const normalizedEmail = (json.user.email || "").trim().toLowerCase();
       const normalizedRole = normalizeRole((json.user.role || "").trim().toLowerCase());
@@ -78,6 +76,7 @@ export default function LoginPage() {
 
       storeLoginSession({
         token: json.token,
+        refreshToken: json.refreshToken,
         user: {
           ...json.user,
           role: isInternalAccount ? dashboardRole : "customer",
@@ -91,7 +90,14 @@ export default function LoginPage() {
           isActive: true,
         });
         setSuccessMessage("Login internal berhasil. Mengalihkan ke dashboard...");
-        router.push("/dashboard/overview");
+
+        if (dashboardRole === "owner") {
+          router.push("/owner/dashboard");
+        } else if (dashboardRole === "manager") {
+          router.push("/dashboard/manager");
+        } else {
+          router.push("/dashboard/overview");
+        }
       } else {
         clearDashboardAuth();
         setSuccessMessage("Login berhasil. Mengalihkan...");
@@ -99,8 +105,12 @@ export default function LoginPage() {
         router.push(redirect && redirect.startsWith("/") ? redirect : "/");
       }
       router.refresh();
-    } catch (error: any) {
-      setErrorMessage(error.message || "Login gagal");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message || "Login gagal");
+      } else {
+        setErrorMessage("Login gagal");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -112,7 +122,7 @@ export default function LoginPage() {
         <div className="flex min-h-screen items-center justify-center">
           <div className="flex w-full max-w-[520px] flex-col items-center gap-y-6">
             <div>
-              <h1 className="text-3xl font-bold font-[#0B1957]">hai!</h1>
+              <h1 className="text-3xl font-bold text-[#0B1957]">hai!</h1>
             </div>
 
             {(errorMessage || successMessage) && (

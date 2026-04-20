@@ -2,8 +2,9 @@ import type { Booking, BookingStatus, PaymentMethod, PaymentStatus, ScheduleSlot
 import { inferStudioTypeFromName, normalizeStudioType, STUDIO_LABEL_BY_TYPE, STUDIO_TYPE_ORDER, type StudioType } from '@/lib/studio'
 
 function normalizeBookingStatus(value?: string): BookingStatus {
-  if (value === 'pending' || value === 'confirmed' || value === 'completed' || value === 'cancelled') return value
-  if (value === 'expired') return 'cancelled'
+  if (value === 'pending' || value === 'confirmed' || value === 'completed' || value === 'cancelled' || value === 'expired') {
+    return value
+  }
   return 'pending'
 }
 
@@ -13,10 +14,12 @@ function normalizePaymentStatus(value?: string): PaymentStatus {
 }
 
 function normalizePaymentMethod(value?: string): PaymentMethod {
-  if (value === 'cash' || value === 'qris' || value === 'va' || value === 'transfer') return value
-  if (value === 'bca_va' || value === 'mandiri_va') return 'va'
-  if (value === 'gopay' || value === 'ovo') return 'qris'
-  return 'transfer'
+  if (value === 'cash' || value === 'qris' || value === 'bca_va' || value === 'mandiri_va' || value === 'gopay' || value === 'ovo') {
+    return value
+  }
+  if (value === 'va') return 'bca_va'
+  if (value === 'transfer') return 'mandiri_va'
+  return 'qris'
 }
 
 function toIsoOrFallback(value: unknown, fallback: string) {

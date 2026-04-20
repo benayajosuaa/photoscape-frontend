@@ -31,13 +31,18 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard/overview', icon: MdDashboard, roles: ['staff', 'manager', 'owner'] },
-  { label: 'Booking', href: '/dashboard/bookings', icon: MdCalendarToday, roles: ['staff', 'manager', 'owner'] },
-  { label: 'Jadwal Studio', href: '/dashboard/schedule', icon: MdViewWeek, roles: ['staff', 'manager', 'owner'] },
-  { label: 'Transaksi', href: '/dashboard/transactions', icon: MdPayment, roles: ['staff', 'manager', 'owner'] },
-  { label: 'Scan Tiket', href: '/dashboard/checkin', icon: MdQrCodeScanner, roles: ['staff', 'owner'] },
-  { label: 'Laporan', href: '/dashboard/reports', icon: MdBarChart, roles: ['manager', 'owner'] },
-  { label: 'Activity Log', href: '/dashboard/logs', icon: MdHistory, roles: ['manager', 'owner'] },
+  { label: 'Dashboard', href: '/dashboard/overview', icon: MdDashboard, roles: ['staff', 'owner'] },
+  { label: 'Booking', href: '/dashboard/bookings', icon: MdCalendarToday, roles: ['staff', 'owner'] },
+  { label: 'Jadwal Studio', href: '/dashboard/schedule', icon: MdViewWeek, roles: ['staff', 'owner'] },
+  { label: 'Transaksi', href: '/dashboard/transactions', icon: MdPayment, roles: ['staff', 'owner'] },
+  { label: 'Scan Tiket', href: '/dashboard/checkin', icon: MdQrCodeScanner, roles: ['staff'] },
+  { label: 'Manager Dashboard', href: '/dashboard/manager', icon: MdDashboard, roles: ['manager'] },
+  { label: 'Daftar Booking', href: '/dashboard/manager/bookings', icon: MdCalendarToday, roles: ['manager'] },
+  { label: 'Laporan Studio', href: '/dashboard/manager/studios', icon: MdViewWeek, roles: ['manager'] },
+  { label: 'Laporan Transaksi', href: '/dashboard/manager/transactions', icon: MdPayment, roles: ['manager'] },
+  { label: 'Activity Log', href: '/dashboard/manager/logs', icon: MdHistory, roles: ['manager'] },
+  { label: 'Laporan', href: '/dashboard/reports', icon: MdBarChart, roles: ['owner'] },
+  { label: 'Activity Log', href: '/dashboard/logs', icon: MdHistory, roles: ['owner'] },
   { label: 'Manajemen Staff', href: '/dashboard/staff', icon: MdManageAccounts, roles: ['owner'] },
   { label: 'Pengaturan', href: '/dashboard/settings', icon: MdSettings, roles: ['owner'] },
 ]

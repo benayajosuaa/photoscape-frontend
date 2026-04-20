@@ -48,7 +48,7 @@ export default function CheckinPage() {
   const router = useRouter()
   const { user } = useAuth({
     requireAuth: true,
-    allowedRoles: ['staff', 'owner'],
+    allowedRoles: ['staff'],
     unauthorizedRedirectTo: '/dashboard/overview',
   })
 
@@ -239,12 +239,12 @@ export default function CheckinPage() {
 
   useEffect(() => {
     if (!user) return
-    if (user.role !== 'staff' && user.role !== 'owner') {
+    if (user.role !== 'staff') {
       router.replace('/dashboard/overview')
     }
   }, [router, user])
 
-  if (!user || (user.role !== 'staff' && user.role !== 'owner')) return null
+  if (!user || user.role !== 'staff') return null
 
   return (
     <div className="space-y-4">

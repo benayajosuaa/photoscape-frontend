@@ -5,7 +5,8 @@ const USER_KEY = 'photoscape_user'
 
 export function normalizeRole(role: string | undefined): Role {
   if (role === 'admin') return 'staff'
-  if (role === 'staff' || role === 'manager' || role === 'owner' || role === 'customer') return role
+  if (role === 'cashier') return 'cashier'
+  if (role === 'staff' || role === 'manager' || role === 'owner' || role === 'customer' || role === 'cashier') return role
   return 'customer'
 }
 
