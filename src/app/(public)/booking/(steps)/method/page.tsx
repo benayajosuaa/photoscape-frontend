@@ -5,7 +5,7 @@ import NavigationBar from "@/utility/navbar";
 import { IoArrowBack } from "react-icons/io5";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Montserrat } from "next/font/google";
+import { Montserrat } from "@/lib/font-fallback";
 
 import { RiBarcodeBoxLine, RiBankLine, RiWallet3Line } from "react-icons/ri";
 import type { ReactNode } from "react";

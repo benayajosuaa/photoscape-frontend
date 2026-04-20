@@ -2,7 +2,7 @@
 
 import NavigationBar from "../../utility/navbar/index"
 import Footer from "../../utility/footer"
-import { Montserrat } from "next/font/google"
+import { Montserrat } from "@/lib/font-fallback"
 import { useState } from "react"
 import { RiGroup3Fill } from "react-icons/ri";
 import { RiTimerLine } from "react-icons/ri";

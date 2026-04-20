@@ -4,7 +4,7 @@ import NavigationBar from "@/utility/navbar";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Montserrat } from "next/font/google";
+import { Montserrat } from "@/lib/font-fallback";
 
 const monserratFont = Montserrat({
   subsets: ["latin"],

@@ -2,7 +2,7 @@
 
 import Footer from "@/utility/footer";
 import NavigationBar from "@/utility/navbar";
-import { Montserrat } from "next/font/google";
+import { Montserrat } from "@/lib/font-fallback";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL, getStoredToken } from "@/lib/auth-client";

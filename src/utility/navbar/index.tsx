@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { Montserrat } from "next/font/google"
+import { Montserrat } from "@/lib/font-fallback"
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IoMenu, IoClose } from "react-icons/io5";

@@ -1,5 +1,5 @@
 "use client"
-import { Montserrat } from "next/font/google"
+import { Montserrat } from "@/lib/font-fallback"
 import Navbar from "../../../../utility/navbar/index"
 import Footer from "../../../../utility/footer/index"
 import { MdOutlineKeyboardBackspace } from "react-icons/md";

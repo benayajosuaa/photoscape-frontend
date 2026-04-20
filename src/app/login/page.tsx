@@ -1,6 +1,6 @@
 "use client";
 
-import { Montserrat } from "next/font/google";
+import { Montserrat } from "@/lib/font-fallback";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useState } from "react";

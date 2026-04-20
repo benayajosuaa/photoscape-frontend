@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { Montserrat } from "next/font/google"
+import { Montserrat } from "@/lib/font-fallback"
 
 const monserratFont = Montserrat({
   subsets: ["latin"],

@@ -2,7 +2,7 @@
 
 import Footer from "@/utility/footer";
 import NavigationBar from "@/utility/navbar";
-import { Montserrat } from "next/font/google";
+import { Montserrat } from "@/lib/font-fallback";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { IoArrowBack } from "react-icons/io5";

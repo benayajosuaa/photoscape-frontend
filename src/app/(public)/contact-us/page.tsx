@@ -1,6 +1,6 @@
 import NavigationBar from "../../../utility/navbar/index"
 import Footer from "../../../utility/footer/index"
-import { Montserrat } from "next/font/google"
+import { Montserrat } from "@/lib/font-fallback"
 
 const monserratFont = Montserrat({
   subsets: ["latin"],
