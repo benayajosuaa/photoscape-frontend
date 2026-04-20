@@ -15,7 +15,7 @@ export default function Home() {
           <NavigationBar />
         </div>
 
-        <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col gap-12 px-4 pb-14 pt-24 sm:px-8 sm:pt-28 lg:flex-row lg:justify-between lg:gap-10 lg:px-16 lg:pb-10 lg:pt-30 lg:items-center">
+        <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col gap-12 px-4 pb-14 pt-24 sm:px-8 sm:pt-28 lg:flex-row lg:justify-between lg:gap-10 lg:px-16 lg:pb-10 lg:pt-32 lg:items-center">
           <div className="flex w-full flex-col gap-y-6 lg:w-[45%]">
             <div className="flex flex-col gap-y-4">
               <span className="mb-3 text-3xl text-[#0B1957] sm:mb-5 sm:text-4xl lg:text-5xl">Hubungi Kami</span>

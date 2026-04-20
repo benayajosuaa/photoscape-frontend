@@ -312,8 +312,8 @@ function StatusPageContent() {
         <NavigationBar />
       </div>
 
-      <main className="min-h-screen px-4 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 lg:px-10 lg:pt-35">
-        <div className="mx-auto max-w-900">
+      <main className="min-h-screen px-4 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 lg:px-10 lg:pt-36">
+        <div className="mx-auto max-w-[900px]">
           <div className="mb-10 flex justify-center">
             <div className="flex gap-x-3">
               <div className="w-7 h-2 bg-[#FA9EBC] rounded-full" />
@@ -326,7 +326,7 @@ function StatusPageContent() {
           </div>
 
           <div className="mb-6 flex justify-center">
-            <div className="flex h-13 w-13 items-center justify-center rounded-full bg-[#FA9EBC] text-[#0B1957]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#FA9EBC] text-[#0B1957]">
               <IoCheckmark className="text-3xl" />
             </div>
           </div>
@@ -403,9 +403,9 @@ function StatusPageContent() {
                     <div className="flex justify-center">
                       <div className="rounded-xl bg-[#F5F5F5] p-3 shadow-[0_6px_14px_rgba(15,24,63,0.18)] sm:p-4">
                         {ticketQrImage ? (
-                          <img src={ticketQrImage} alt="QR Tiket Booking" className="h-40 w-40 sm:h-50 sm:w-50" />
+                          <img src={ticketQrImage} alt="QR Tiket Booking" className="h-40 w-40 sm:h-52 sm:w-52" />
                         ) : (
-                          <div className="flex h-40 w-40 items-center justify-center text-center text-sm text-[#666] sm:h-50 sm:w-50 sm:text-lg">
+                          <div className="flex h-40 w-40 items-center justify-center text-center text-sm text-[#666] sm:h-52 sm:w-52 sm:text-lg">
                             QR tiket belum tersedia
                           </div>
                         )}

@@ -266,7 +266,7 @@ function ConfirmPageContent() {
         <NavigationBar />
       </div>
 
-      <main className="min-h-screen p-4 pt-28 sm:p-8 sm:pt-32 lg:p-20 lg:pt-35">
+      <main className="min-h-screen p-4 pt-28 sm:p-8 sm:pt-32 lg:p-20 lg:pt-36">
         <div className="mx-auto max-w-[980px]">
           <div className="flex justify-center">
             <div className="flex gap-x-3">
@@ -298,9 +298,9 @@ function ConfirmPageContent() {
             <div className="flex justify-center">
               <div className="rounded-[20px] bg-[#F5F5F5] p-5 shadow-[0_6px_14px_rgba(15,24,63,0.2)]">
                 {activeMethod === "qris" && qrImageUrl ? (
-                  <img src={qrImageUrl} alt="QR pembayaran" className="h-40 w-40 sm:h-50 sm:w-50" />
+                  <img src={qrImageUrl} alt="QR pembayaran" className="h-40 w-40 sm:h-52 sm:w-52" />
                 ) : (
-                  <div className="flex h-40 w-40 items-center justify-center text-center text-sm text-[#666] sm:h-100 sm:w-100 sm:text-xl">
+                  <div className="flex h-40 w-40 items-center justify-center text-center text-sm text-[#666] sm:h-52 sm:w-52 sm:text-xl">
                     Metode ini tidak menggunakan QR
                   </div>
                 )}

@@ -283,7 +283,7 @@ function PaymentPageContent() {
         <NavigationBar />
       </div>
 
-      <main className="min-h-screen p-4 pt-28 sm:p-8 sm:pt-32 lg:p-20 lg:pt-35">
+      <main className="min-h-screen p-4 pt-28 sm:p-8 sm:pt-32 lg:p-20 lg:pt-36">
         <div className="mx-auto ">
           
 

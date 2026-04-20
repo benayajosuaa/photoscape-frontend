@@ -134,7 +134,7 @@ export default function BookingHistoryPage() {
         <NavigationBar />
       </div>
 
-      <main className="min-h-screen px-4 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 lg:px-20 lg:pt-35">
+      <main className="min-h-screen px-4 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 lg:px-20 lg:pt-36">
         <div className="mx-auto max-w-[1080px]">
           <h1 className="text-[28px] font-semibold leading-none sm:text-[36px] lg:text-[42px]">Riwayat Booking</h1>
 

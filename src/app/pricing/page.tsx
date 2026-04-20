@@ -53,7 +53,7 @@ export default function Home() {
       </div>
 
       {/* CONTENT */}
-      <div className="min-h-screen bg-[#FA9EBC59] px-4 pb-14 pt-24 sm:px-8 sm:pt-28 lg:p-15 lg:pt-32">
+      <div className="min-h-screen bg-[#FA9EBC59] px-4 pb-14 pt-24 sm:px-8 sm:pt-28 lg:px-12 lg:pb-14 lg:pt-32">
 
         {/* TITLE */}
         <div className="mb-8 flex flex-col gap-y-3 sm:mb-10 sm:gap-y-4">
