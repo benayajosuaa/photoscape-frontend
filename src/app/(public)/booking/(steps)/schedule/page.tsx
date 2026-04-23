@@ -443,41 +443,6 @@ function SchedulePageContent() {
             <div className="flex-1 rounded-[26px] bg-[#F4E6EE] p-5 sm:p-8">
               <h2 className="mb-5 text-[24px] font-semibold sm:text-[28px] lg:text-[32px]">Slot Waktu Tersedia</h2>
               <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
-                <select
-                  value={selectedLocationId}
-                  onChange={event => setSelectedLocationId(event.target.value)}
-                  className="min-w-[#220] rounded-xl border border-[#dec6d2] bg-white px-4 py-3 text-xl"
-                > 
-                  {locations.map(location => (
-                    <option key={location.id} value={location.id}>
-                      {location.name}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  value={selectedPackageId}
-                  onChange={event => setSelectedPackageId(event.target.value)}
-                  className="min-w-[#280p] rounded-xl border border-[#dec6d2] bg-white px-4 py-3 text-xl"
-                >
-                  {packages.map(item => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  value={selectedStudioType}
-                  onChange={event => setSelectedStudioType(event.target.value)}
-                  className="min-w-[#220] rounded-xl border border-[#dec6d2] bg-white px-4 py-3 text-xl"
-                >
-                  {availableStudioTypes.map(type => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
               </div>
 
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-5">

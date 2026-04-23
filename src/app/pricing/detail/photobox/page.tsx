@@ -15,6 +15,7 @@ export default function Page() {
         "Aksesoris foto tersedia",
       ]}
       imageText="Photo Box Moments"
+      imageUrl="/paket/photobox.jpg"
     />
   );
 }

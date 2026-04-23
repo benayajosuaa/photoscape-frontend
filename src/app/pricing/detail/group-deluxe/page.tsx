@@ -17,6 +17,7 @@ export default function Page() {
         "Aksesoris studio tersedia",
       ]}
       imageText="Group Deluxe"
+      imageUrl="/paket/groupdeluxe.jpg"
     />
   );
 }

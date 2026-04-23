@@ -15,6 +15,7 @@ export default function Page() {
         "Aksesoris studio tersedia",
       ]}
       imageText="Group Lite"
+      imageUrl="/paket/grouplite.jpg"
     />
   );
 }

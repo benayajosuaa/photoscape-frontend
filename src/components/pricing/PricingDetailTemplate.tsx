@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { Montserrat } from "@/lib/font-fallback";
 import Navbar from "@/utility/navbar";
@@ -12,6 +13,7 @@ type PricingDetailTemplateProps = {
   price: string;
   benefits: string[];
   imageText?: string;
+  imageUrl?: string;
 };
 
 const monserratFont = Montserrat({
@@ -20,7 +22,7 @@ const monserratFont = Montserrat({
 });
 
 export default function PricingDetailTemplate(props: PricingDetailTemplateProps) {
-  const { title, description, price, benefits, imageText = "Preview Paket" } = props;
+  const { title, description, price, benefits, imageText = "Preview Paket", imageUrl } = props;
 
   return (
     <div className={`${monserratFont.className} min-h-screen bg-white text-gray-900`}>
@@ -38,9 +40,19 @@ export default function PricingDetailTemplate(props: PricingDetailTemplateProps)
 
         <section className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start lg:gap-12">
           <div className="overflow-hidden rounded-3xl border border-[#e5d4dc] bg-[#f7edf2]">
-            <div className="flex aspect-[4/3] w-full items-center justify-center px-6 text-center text-base font-medium text-[#6b4f5c] sm:text-lg">
-              {imageText}
-            </div>
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                alt={title}
+                width={500}
+                height={375}
+                className="w-full h-auto object-cover aspect-[4/3]"
+              />
+            ) : (
+              <div className="flex aspect-[4/3] w-full items-center justify-center px-6 text-center text-base font-medium text-[#6b4f5c] sm:text-lg">
+                {imageText}
+              </div>
+            )}
           </div>
 
           <div className="text-left">
@@ -68,4 +80,3 @@ export default function PricingDetailTemplate(props: PricingDetailTemplateProps)
     </div>
   );
 }
-

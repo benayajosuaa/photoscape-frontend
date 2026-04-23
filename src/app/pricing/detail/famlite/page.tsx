@@ -16,6 +16,7 @@ export default function Page() {
         "Aksesoris studio tersedia",
       ]}
       imageText="Family Lite"
+      imageUrl="/paket/famlite.jpg"
     />
   );
 }
