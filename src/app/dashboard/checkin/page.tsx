@@ -29,6 +29,7 @@ type AdminBookingSearchItem = {
 
 const QR_PREFIX = 'PHOTOSCAPE-TICKET:'
 const AUTO_SCAN_COOLDOWN_MS = 2500
+const AUTO_SCAN_INTERVAL_MS = 180
 
 function parseBookingCode(raw: string) {
   const value = raw.trim()
@@ -60,6 +61,11 @@ export default function CheckinPage() {
   const autoLookupLockRef = useRef(false)
   const lastAutoProcessedCodeRef = useRef('')
   const lastAutoProcessedAtRef = useRef(0)
+  const lastAutoScanTickRef = useRef(0)
+  const zxingRef = useRef<{
+    decodeFromVideo: (video: HTMLVideoElement) => string | null
+    dispose: () => void
+  } | null>(null)
 
   const [manualCode, setManualCode] = useState('')
   const [scanValue, setScanValue] = useState('')
@@ -84,6 +90,10 @@ export default function CheckinPage() {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop())
       streamRef.current = null
+    }
+    if (zxingRef.current) {
+      zxingRef.current.dispose()
+      zxingRef.current = null
     }
     setCameraActive(false)
   }, [])
@@ -134,6 +144,97 @@ export default function CheckinPage() {
     }
   }
 
+  const handleAutoDetected = useCallback(
+    (raw: string) => {
+      setScanValue(raw)
+      setManualCode(raw)
+
+      const code = parseBookingCode(raw)
+      if (!code) return
+
+      const normalizedCode = code.toLowerCase()
+      const now = Date.now()
+      const sameCodeWithinCooldown =
+        lastAutoProcessedCodeRef.current === normalizedCode &&
+        now - lastAutoProcessedAtRef.current < AUTO_SCAN_COOLDOWN_MS
+
+      if (!autoLookupLockRef.current && !sameCodeWithinCooldown) {
+        autoLookupLockRef.current = true
+        lastAutoProcessedCodeRef.current = normalizedCode
+        lastAutoProcessedAtRef.current = now
+        void handleCheck(raw, 'auto')
+      }
+    },
+    [handleCheck],
+  )
+
+  const ensureZxingDecoder = useCallback(async () => {
+    if (zxingRef.current) return zxingRef.current
+
+    const lib = await import('@zxing/library')
+
+    const formats = [
+      lib.BarcodeFormat.QR_CODE,
+      lib.BarcodeFormat.CODE_128,
+      lib.BarcodeFormat.CODE_39,
+      lib.BarcodeFormat.EAN_13,
+    ]
+
+    const hints = new Map()
+    hints.set(lib.DecodeHintType.POSSIBLE_FORMATS, formats)
+
+    const reader = new lib.MultiFormatReader()
+    reader.setHints(hints)
+
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    if (!ctx) {
+      throw new Error('Browser tidak mendukung canvas untuk auto scan.')
+    }
+
+    const decoder = {
+      decodeFromVideo(video: HTMLVideoElement) {
+        const width = video.videoWidth
+        const height = video.videoHeight
+        if (!width || !height) return null
+
+        if (canvas.width !== width) canvas.width = width
+        if (canvas.height !== height) canvas.height = height
+
+        ctx.drawImage(video, 0, 0, width, height)
+        const image = ctx.getImageData(0, 0, width, height)
+
+        try {
+          const source = new lib.RGBLuminanceSource(image.data, width, height)
+          const bitmap = new lib.BinaryBitmap(new lib.HybridBinarizer(source))
+          const result = reader.decode(bitmap)
+          return result?.getText?.() || null
+        } catch (error) {
+          if (
+            error instanceof lib.NotFoundException ||
+            error instanceof lib.ChecksumException ||
+            error instanceof lib.FormatException
+          ) {
+            return null
+          }
+          return null
+        } finally {
+          reader.reset()
+        }
+      },
+      dispose() {
+        try {
+          reader.reset()
+        } catch {
+          // ignore
+        }
+      },
+    }
+
+    zxingRef.current = decoder
+    return decoder
+  }, [])
+
   const startCamera = async () => {
     setCameraError('')
 
@@ -144,7 +245,11 @@ export default function CheckinPage() {
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: 'environment' } },
+        video: {
+          facingMode: { ideal: 'environment' },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
         audio: false,
       })
 
@@ -157,37 +262,41 @@ export default function CheckinPage() {
       scanActiveRef.current = true
 
       const detectorClass = (window as Window & { BarcodeDetector?: BarcodeDetectorCtor }).BarcodeDetector
-      if (!detectorClass) {
-        setCameraError('Auto scan tidak didukung browser ini. Gunakan input kode manual.')
-        return
+      const detector = detectorClass ? new detectorClass({ formats: ['qr_code', 'code_128', 'code_39', 'ean_13'] }) : null
+      if (!detector) {
+        setCameraError('Auto scan mode kompatibilitas aktif (barcode detector tidak tersedia).')
+        try {
+          await ensureZxingDecoder()
+        } catch {
+          setCameraError('Auto scan tidak tersedia di device ini. Gunakan input kode manual atau gunakan browser Chrome/Edge.')
+        }
       }
-
-      const detector = new detectorClass({ formats: ['qr_code', 'code_128', 'code_39', 'ean_13'] })
 
       const scan = async () => {
         if (!videoRef.current || !scanActiveRef.current) return
+
+        const tick = Date.now()
+        if (tick - lastAutoScanTickRef.current < AUTO_SCAN_INTERVAL_MS) {
+          rafRef.current = requestAnimationFrame(scan)
+          return
+        }
+        lastAutoScanTickRef.current = tick
+
         try {
-          const barcodes = await detector.detect(videoRef.current)
-          const raw = barcodes.find((item) => item.rawValue)?.rawValue
-          if (raw) {
-            setScanValue(raw)
-            setManualCode(raw)
-
-            const code = parseBookingCode(raw)
-            if (code) {
-              const normalizedCode = code.toLowerCase()
-              const now = Date.now()
-              const sameCodeWithinCooldown =
-                lastAutoProcessedCodeRef.current === normalizedCode &&
-                now - lastAutoProcessedAtRef.current < AUTO_SCAN_COOLDOWN_MS
-
-              if (!autoLookupLockRef.current && !sameCodeWithinCooldown) {
-                autoLookupLockRef.current = true
-                lastAutoProcessedCodeRef.current = normalizedCode
-                lastAutoProcessedAtRef.current = now
-                void handleCheck(raw, 'auto')
-              }
+          if (detector) {
+            const barcodes = await detector.detect(videoRef.current)
+            const raw = barcodes.find((item) => item.rawValue)?.rawValue
+            if (raw) {
+              handleAutoDetected(raw)
+              rafRef.current = requestAnimationFrame(scan)
+              return
             }
+          }
+
+          const fallback = await ensureZxingDecoder()
+          const raw = fallback.decodeFromVideo(videoRef.current)
+          if (raw) {
+            handleAutoDetected(raw)
           }
         } catch {
           // keep scanning without breaking the camera stream
