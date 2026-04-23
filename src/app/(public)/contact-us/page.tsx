@@ -1,6 +1,10 @@
+"use client"
+
 import NavigationBar from "../../../utility/navbar/index"
 import Footer from "../../../utility/footer/index"
 import { Montserrat } from "@/lib/font-fallback"
+import { apiFetchPublic } from "@/lib/api"
+import { useState, type FormEvent } from "react"
 
 const monserratFont = Montserrat({
   subsets: ["latin"],
@@ -8,6 +12,43 @@ const monserratFont = Montserrat({
 })
 
 export default function Home() {
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [subject, setSubject] = useState("")
+  const [message, setMessage] = useState("")
+  const [isSending, setIsSending] = useState(false)
+  const [statusMessage, setStatusMessage] = useState<string | null>(null)
+
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault()
+    if (isSending) return
+
+    setIsSending(true)
+    setStatusMessage(null)
+
+    try {
+      await apiFetchPublic<{ message: string }>("/api/contact-us", {
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          email,
+          subject: subject.trim() ? subject : undefined,
+          message,
+        }),
+      })
+
+      setStatusMessage("Pesan kamu sudah terkirim. Terima kasih!")
+      setName("")
+      setEmail("")
+      setSubject("")
+      setMessage("")
+    } catch (error) {
+      setStatusMessage(error instanceof Error ? error.message : "Gagal mengirim pesan")
+    } finally {
+      setIsSending(false)
+    }
+  }
+
   return (
     <div className={`${monserratFont.className} bg-white text-gray-900`}>
       <div>
@@ -32,7 +73,7 @@ export default function Home() {
             <div className="text-2xl font-bold text-[#0B1957] sm:text-3xl lg:mb-8 lg:text-4xl">Sampaikan Pesan Anda</div>
 
             {/* isi Form */}
-            <div className="flex w-full flex-col gap-y-5 sm:gap-y-6">
+            <form onSubmit={onSubmit} className="flex w-full flex-col gap-y-5 sm:gap-y-6">
               <div className="flex w-full flex-col gap-y-2 sm:gap-y-3">
                 <label className="text-lg font-semibold text-blue-900 sm:text-xl">
                   Name
@@ -41,7 +82,10 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="Enter Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className="w-full border-b border-gray-400 p-2 text-gray-600 focus:border-blue-500 focus:outline-none"
+                  required
                 />
               </div>
               <div className="flex w-full flex-col gap-y-2 sm:gap-y-3">
@@ -50,8 +94,24 @@ export default function Home() {
                 </label>
 
                 <input
+                  type="email"
+                  placeholder="Enter Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full border-b border-gray-400 p-2 text-gray-600 focus:border-blue-500 focus:outline-none"
+                  required
+                />
+              </div>
+              <div className="flex w-full flex-col gap-y-2 sm:gap-y-3">
+                <label className="text-lg font-semibold text-blue-900 sm:text-xl">
+                  Subject (optional)
+                </label>
+
+                <input
                   type="text"
-                  placeholder="Enter Name"
+                  placeholder="Enter Subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
                   className="w-full border-b border-gray-400 p-2 text-gray-600 focus:border-blue-500 focus:outline-none"
                 />
               </div>
@@ -61,18 +121,30 @@ export default function Home() {
                 </label>
 
                 <textarea
-                  placeholder="Enter Name"
+                  placeholder="Enter Message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                   className="h-44 w-full resize-none border border-gray-400 p-2 text-gray-600 focus:border-blue-500 focus:outline-none sm:h-52 lg:h-60"
+                  required
                 />
               </div>
-            </div>
+              {statusMessage ? (
+                <div className="rounded-xl bg-gray-100 p-3 text-sm text-gray-700">
+                  {statusMessage}
+                </div>
+              ) : null}
 
-            <div>
-              {/* send message */}
-              <button className="mt-8 w-full rounded-2xl bg-[#FA9EBC] p-3 sm:mt-10 lg:mt-12">
-                <span className="font-bold">Kirim</span>
-              </button>
-            </div>
+              <div>
+                {/* send message */}
+                <button
+                  type="submit"
+                  disabled={isSending}
+                  className="mt-8 w-full rounded-2xl bg-[#FA9EBC] p-3 disabled:cursor-not-allowed disabled:opacity-70 sm:mt-10 lg:mt-12"
+                >
+                  <span className="font-bold">{isSending ? "Mengirim..." : "Kirim"}</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
 
