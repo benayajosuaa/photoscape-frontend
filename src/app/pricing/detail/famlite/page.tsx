@@ -9,7 +9,7 @@ export default function Page() {
       description="Paket foto keluarga hemat dengan hasil tetap profesional untuk mengabadikan momen kebersamaan."
       price="220.000"
       benefits={[
-        "Durasi sesi 60 menit",
+        "Durasi sesi 50 menit",
         "Maksimal 4 orang",
         "Semua file foto (softcopy)",
         "3 foto cetak",

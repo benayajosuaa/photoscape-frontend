@@ -47,6 +47,14 @@ const navItems: NavItem[] = [
 
 export function Sidebar({ user, onLogout }: SidebarProps) {
   const pathname = usePathname()
+  const visibleNavItems = navItems.filter((item) => item.roles.includes(user.role))
+
+  const matchesPath = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
+  const activeHref =
+    visibleNavItems
+      .filter((item) => matchesPath(item.href))
+      .sort((a, b) => b.href.length - a.href.length)[0]?.href ?? null
+
   return (
     <aside className="flex h-full w-60 flex-col bg-gray-900 p-4 text-white">
       <div className="mb-6 border-b border-white/15 pb-4">
@@ -55,24 +63,22 @@ export function Sidebar({ user, onLogout }: SidebarProps) {
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto">
-        {navItems
-          .filter((item) => item.roles.includes(user.role))
-          .map((item) => {
-            const Icon = item.icon
-            const active = pathname.startsWith(item.href)
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${
-                  active ? 'bg-white text-gray-900' : 'text-gray-200 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <Icon className="text-lg" />
-                {item.label}
-              </Link>
-            )
-          })}
+        {visibleNavItems.map((item) => {
+          const Icon = item.icon
+          const active = item.href === activeHref
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${
+                active ? 'bg-white text-gray-900' : 'text-gray-200 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <Icon className="text-lg" />
+              {item.label}
+            </Link>
+          )
+        })}
       </nav>
 
       <div className="mt-4 border-t border-white/15 pt-4">

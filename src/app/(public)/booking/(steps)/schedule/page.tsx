@@ -64,6 +64,27 @@ function formatHour(iso: string) {
   return `${hours}.${minutes}`;
 }
 
+function dedupeSlotsByStartTime(inputSlots: Slot[]) {
+  const grouped = new Map<string, Slot>();
+
+  for (const slot of inputSlots) {
+    const key = slot.startTime;
+    const existing = grouped.get(key);
+
+    if (!existing) {
+      grouped.set(key, slot);
+      continue;
+    }
+
+    // Prefer an available slot for the same start time.
+    if (existing.status !== "available" && slot.status === "available") {
+      grouped.set(key, slot);
+    }
+  }
+
+  return [...grouped.values()].sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+}
+
 function buildCalendarCells(date: Date) {
   const year = date.getFullYear();
   const month = date.getMonth();
@@ -192,11 +213,13 @@ function SchedulePageContent() {
     let active = true;
 
     const sortSlots = (inputSlots: Slot[]) =>
-      [...inputSlots].sort((a, b) => {
-        const aTime = new Date(a.startTime).getTime();
-        const bTime = new Date(b.startTime).getTime();
-        return aTime - bTime;
-      });
+      dedupeSlotsByStartTime(
+        [...inputSlots].sort((a, b) => {
+          const aTime = new Date(a.startTime).getTime();
+          const bTime = new Date(b.startTime).getTime();
+          return aTime - bTime;
+        })
+      );
 
     const findNearestDateWithAvailableSlot = async (baseParams: {
       locationId: string;

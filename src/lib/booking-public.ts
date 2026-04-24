@@ -62,7 +62,7 @@ type CacheEntry<T> = {
 
 const memoryCache = new Map<string, CacheEntry<unknown>>();
 const inFlight = new Map<string, Promise<unknown>>();
-const META_CACHE_KEY = "photoscape:booking:meta:v1";
+const META_CACHE_KEY = "photoscape:booking:meta:v3";
 const META_TTL_MS = 5 * 60 * 1000;
 const AVAILABILITY_TTL_MS = 90 * 1000;
 
@@ -131,7 +131,7 @@ function buildAvailabilityKey(params: {
   studioType: string;
   date: string;
 }) {
-  return `photoscape:booking:availability:v1:${params.locationId}:${params.packageId}:${params.studioType}:${params.date}`;
+  return `photoscape:booking:availability:v3:${params.locationId}:${params.packageId}:${params.studioType}:${params.date}`;
 }
 
 export async function fetchPublicBookingMeta() {

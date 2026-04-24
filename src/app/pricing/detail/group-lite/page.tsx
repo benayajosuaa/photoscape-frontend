@@ -13,6 +13,7 @@ export default function Page() {
         "Menggunakan remote control",
         "3 foto fisik",
         "Aksesoris studio tersedia",
+        "Durasi sesi 50 menit"
       ]}
       imageText="Group Lite"
       imageUrl="/paket/grouplite.jpg"

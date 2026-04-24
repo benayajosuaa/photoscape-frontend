@@ -13,6 +13,7 @@ export default function Page() {
         "Durasi sesi singkat",
         "Softcopy foto via QR / email",
         "Aksesoris foto tersedia",
+        "Durasi sesi 25 menit"
       ]}
       imageText="Photo Box Moments"
       imageUrl="/paket/photobox.jpg"

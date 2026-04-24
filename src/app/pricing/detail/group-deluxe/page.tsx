@@ -15,6 +15,7 @@ export default function Page() {
         "5 foto fisik",
         "Maksimal 3 background",
         "Aksesoris studio tersedia",
+        "Durasi sesi 50 menit"
       ]}
       imageText="Group Deluxe"
       imageUrl="/paket/groupdeluxe.jpg"

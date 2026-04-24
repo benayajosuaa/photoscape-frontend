@@ -9,7 +9,7 @@ export default function Page() {
       description="Paket keluarga paling lengkap untuk momen istimewa dengan waktu sesi lebih panjang dan hasil lebih maksimal."
       price="630.000"
       benefits={[
-        "Durasi sesi 90 menit",
+        "Durasi sesi 50 menit",
         "Maksimal 8 orang",
         "Semua file foto (softcopy)",
         "10 foto cetak premium",

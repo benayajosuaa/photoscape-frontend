@@ -308,7 +308,9 @@ function PackagePageContent() {
                           <div className="">
                             <h2 className="font-semibold">{item.name}</h2>
                             <p className="mt-1 text-sm text-[#374151] sm:text-base">
-                              {item.durationMinutes} menit • Maks {item.maxCapacity} orang
+                              {activeTab === "photobox"
+                                ? `${item.durationMinutes} menit • ${item.maxCapacity} foto`
+                                : `${item.durationMinutes} menit • Max ${item.maxCapacity} orang`}
                             </p>
                           </div>
 

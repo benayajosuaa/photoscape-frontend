@@ -18,7 +18,8 @@ function getBaseCandidates() {
       ''
   )
 
-  return unique([BASE, directBackend])
+  const isLocalBackend = /^(http:\/\/)?(localhost|127\.0\.0\.1)(:\d+)?$/i.test(directBackend)
+  return isLocalBackend ? unique([directBackend, BASE]) : unique([BASE, directBackend])
 }
 
 async function performFetch(path: string, options?: RequestInit) {

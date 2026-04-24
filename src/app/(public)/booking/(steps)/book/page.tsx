@@ -228,7 +228,7 @@ function BookPageContent() {
                   router.push(`/booking/package?${query.toString()}`);
                 }
               }}
-              className={`flex items-center gap-x-2 px-8 py-2 rounded-lg transition ${
+              className={`flex items-center gap-x-2 px-8 py-2 rounded-lg transition bt-10 md:bt-8 ${
                 canContinue
                   ? "bg-[#FA9EBC] text-[#0B1957] hover:opacity-90"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -244,7 +244,7 @@ function BookPageContent() {
         )}
       </div>
 
-      <div>
+      <div className="mt-10 md:mt-2">
         <div>
           <Footer />
         </div>
