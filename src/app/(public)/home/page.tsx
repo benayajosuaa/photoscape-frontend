@@ -33,8 +33,8 @@ export default function Home() {
         </div>
 
         {/* SECTION 2 */}
-        <div className="w-auto py-14 sm:py-16 lg:h-screen lg:py-0">
-          <div className="flex h-full items-center justify-center">
+        <div className="w-auto py-14 sm:py-16 lg:min-h-screen lg:py-0">
+          <div className="flex items-center justify-center lg:min-h-screen">
             <div className="mx-auto flex w-full max-w-[1450px] flex-col-reverse items-center gap-10 px-4 sm:px-8 lg:flex-row lg:justify-between lg:gap-x-20 lg:px-16">
               <div className="w-full lg:w-4/10">
                 <div className="flex flex-col">
@@ -66,7 +66,7 @@ export default function Home() {
         </div>
 
         {/* SECTION 3 */}
-        <div className="bg-[#F8C6D673] px-4 py-14 sm:px-8 lg:h-screen lg:px-10 lg:py-10">
+        <div className="bg-[#F8C6D673] px-4 py-14 sm:px-8 lg:min-h-screen lg:px-10 lg:py-10">
           <div className="flex flex-col justify-center gap-y-4 pt-2 text-[#0B1957] sm:gap-y-5 lg:mt-12">
             <span className="text-center text-3xl font-semibold sm:text-4xl">Layanan Kami</span>
             <span className="text-center text-base sm:text-lg lg:text-xl">Pilih Cara Terbaik Untuk Mengabadikan Momenmu</span>

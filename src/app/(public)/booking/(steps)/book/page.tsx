@@ -244,7 +244,7 @@ function BookPageContent() {
         )}
       </div>
 
-      <div className="mt-10 md:mt-2">
+      <div className="mt-10 md:mt-15">
         <div>
           <Footer />
         </div>
