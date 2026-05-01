@@ -49,6 +49,41 @@ type StudioUsageResponse = {
   trend: StudioUsageTrend[]
 }
 
+function escapeCsvValue(value: string | number) {
+  const normalized = String(value ?? '').replace(/"/g, '""')
+  return `"${normalized}"`
+}
+
+function buildStudioUsageQuery(params: {
+  period: 'daily' | 'weekly' | 'monthly' | 'custom'
+  startDate: string
+  endDate: string
+  serviceType: string
+  studioId: string
+  locationId: string
+}) {
+  return new URLSearchParams({
+    ...(params.period !== 'custom' ? { period: params.period } : {}),
+    startDate: params.startDate,
+    endDate: params.endDate,
+    ...(params.serviceType ? { serviceType: params.serviceType } : {}),
+    ...(params.studioId ? { studioId: params.studioId } : {}),
+    ...(params.locationId ? { locationId: params.locationId } : {}),
+  })
+}
+
+function downloadCsvFile(filename: string, content: string) {
+  const blob = new Blob([`\uFEFF${content}`], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
+
 function getPresetRange(preset: string) {
   const now = new Date()
   const end = now.toISOString().slice(0, 10)
@@ -76,6 +111,7 @@ export default function ManagerStudioUsagePage() {
   const [trendRows, setTrendRows] = useState<StudioUsageTrend[]>([])
   const [summary, setSummary] = useState<StudioUsageResponse['summary'] | null>(null)
   const [filters, setFilters] = useState<ManagerFilterOptions | null>(null)
+  const [exporting, setExporting] = useState(false)
   const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly' | 'custom'>('daily')
   const [startDate, setStartDate] = useState(getPresetRange('daily').startDate)
   const [endDate, setEndDate] = useState(getPresetRange('daily').endDate)
@@ -87,13 +123,13 @@ export default function ManagerStudioUsagePage() {
     setLoading(true)
     setError(null)
     try {
-      const query = new URLSearchParams({
-        ...(period !== 'custom' ? { period } : {}),
+      const query = buildStudioUsageQuery({
+        period,
         startDate,
         endDate,
-        ...(serviceType ? { serviceType } : {}),
-        ...(studioId ? { studioId } : {}),
-        ...(locationId ? { locationId } : {}),
+        serviceType,
+        studioId,
+        locationId,
       })
       const res = await apiFetch<{ data: StudioUsageResponse }>(`/api/manager/studio-usage?${query.toString()}`)
       setRows(res.data.studios || [])
@@ -103,6 +139,68 @@ export default function ManagerStudioUsagePage() {
       setError(err instanceof Error ? err.message : 'Gagal memuat laporan studio')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleExport = async () => {
+    setExporting(true)
+    setError(null)
+    try {
+      const query = buildStudioUsageQuery({
+        period,
+        startDate,
+        endDate,
+        serviceType,
+        studioId,
+        locationId,
+      })
+      const res = await apiFetch<{ data: StudioUsageResponse }>(`/api/manager/studio-usage?${query.toString()}`)
+      const exportRows = res.data.studios || []
+
+      if (!exportRows.length) {
+        throw new Error('Tidak ada data laporan studio untuk diexport')
+      }
+
+      const headers = [
+        'Nama Studio',
+        'Lokasi',
+        'Jenis Layanan',
+        'Jumlah Sesi',
+        'Total Jam',
+        'Utilisasi',
+        'Revenue',
+        'Total Slot',
+        'Slot Terpakai',
+        'Pembatalan',
+      ]
+
+      const csvBody = exportRows
+        .map((row) =>
+          [
+            row.studioName,
+            row.locationName,
+            serviceTypeLabel(row.serviceType),
+            row.totalSessions,
+            row.totalHours.toFixed(2),
+            `${row.utilizationRate.toFixed(2)}%`,
+            row.totalRevenue,
+            row.totalSchedules,
+            row.utilizedSchedules,
+            row.totalCancelled,
+          ]
+            .map(escapeCsvValue)
+            .join(','),
+        )
+        .join('\n')
+
+      downloadCsvFile(
+        `laporan-studio-${startDate || 'awal'}_${endDate || 'akhir'}.csv`,
+        `${headers.map(escapeCsvValue).join(',')}\n${csvBody}`,
+      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Gagal export laporan studio')
+    } finally {
+      setExporting(false)
     }
   }
 
@@ -142,7 +240,15 @@ export default function ManagerStudioUsagePage() {
 
       {error ? <p className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}
 
-      <Card title="Laporan Penggunaan Studio" subtitle="Read-only monitoring berdasarkan periode harian/mingguan/bulanan">
+      <Card
+        title="Laporan Penggunaan Studio"
+        subtitle="Read-only monitoring berdasarkan periode harian/mingguan/bulanan"
+        right={
+          <Button variant="ghost" loading={exporting} disabled={loading} onClick={() => void handleExport()}>
+            Export CSV
+          </Button>
+        }
+      >
         <div className="grid gap-2 md:grid-cols-7">
           <Select
             value={period}

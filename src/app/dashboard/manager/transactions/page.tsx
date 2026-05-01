@@ -89,6 +89,81 @@ type ManagerTransactionsResponse = {
   transactions: ManagerTransactionRow[]
 }
 
+function escapeCsvValue(value: string | number) {
+  const normalized = String(value ?? '').replace(/"/g, '""')
+  return `"${normalized}"`
+}
+
+function buildTransactionQuery(params: {
+  page: number
+  limit: number
+  period: 'daily' | 'weekly' | 'monthly'
+  startDate: string
+  endDate: string
+  method: string
+  serviceType: string
+  studioId: string
+  locationId: string
+}) {
+  return new URLSearchParams({
+    page: String(params.page),
+    limit: String(params.limit),
+    period: params.period,
+    ...(params.startDate ? { startDate: params.startDate } : {}),
+    ...(params.endDate ? { endDate: params.endDate } : {}),
+    ...(params.method ? { method: params.method } : {}),
+    ...(params.serviceType ? { serviceType: params.serviceType } : {}),
+    ...(params.studioId ? { studioId: params.studioId } : {}),
+    ...(params.locationId ? { locationId: params.locationId } : {}),
+  })
+}
+
+function downloadCsvFile(filename: string, rows: ManagerTransactionRow[]) {
+  const headers = [
+    'Tanggal',
+    'Kode Transaksi',
+    'Kode Booking',
+    'Nama Customer',
+    'Lokasi',
+    'Paket',
+    'Studio',
+    'Layanan',
+    'Metode',
+    'Jumlah',
+    'Status',
+  ]
+
+  const csvRows = rows.map((row) =>
+    [
+      formatDateTimeServerClock(row.createdAt),
+      row.transactionCode,
+      row.bookingCode,
+      row.customerName,
+      row.locationName,
+      row.packageName,
+      row.studioName,
+      serviceTypeLabel(row.serviceType),
+      paymentMethodLabel(row.method),
+      row.amount,
+      paymentStatusLabel[row.status],
+    ]
+      .map(escapeCsvValue)
+      .join(','),
+  )
+
+  const blob = new Blob([`\uFEFF${headers.map(escapeCsvValue).join(',')}\n${csvRows.join('\n')}`], {
+    type: 'text/csv;charset=utf-8;',
+  })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
+
 function getPresetRange(period: 'daily' | 'weekly' | 'monthly') {
   const now = new Date()
   const end = now.toISOString().slice(0, 10)
@@ -118,6 +193,7 @@ export default function ManagerTransactionsPage() {
   const [summary, setSummary] = useState<ManagerTransactionsResponse['summary'] | null>(null)
   const [analytics, setAnalytics] = useState<ManagerTransactionsResponse['analytics'] | null>(null)
   const [filters, setFilters] = useState<ManagerFilterOptions | null>(null)
+  const [exporting, setExporting] = useState(false)
   const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly'>('weekly')
   const [startDate, setStartDate] = useState(getPresetRange('weekly').startDate)
   const [endDate, setEndDate] = useState(getPresetRange('weekly').endDate)
@@ -130,16 +206,16 @@ export default function ManagerTransactionsPage() {
     setLoading(true)
     setError(null)
     try {
-      const query = new URLSearchParams({
-        page: String(nextPage),
-        limit: '10',
+      const query = buildTransactionQuery({
+        page: nextPage,
+        limit: 10,
         period,
-        ...(startDate ? { startDate } : {}),
-        ...(endDate ? { endDate } : {}),
-        ...(method ? { method } : {}),
-        ...(serviceType ? { serviceType } : {}),
-        ...(studioId ? { studioId } : {}),
-        ...(locationId ? { locationId } : {}),
+        startDate,
+        endDate,
+        method,
+        serviceType,
+        studioId,
+        locationId,
       })
       const res = await apiFetch<{ data: ManagerTransactionsResponse }>(`/api/manager/transactions?${query.toString()}`)
       setRows(res.data.transactions || [])
@@ -151,6 +227,55 @@ export default function ManagerTransactionsPage() {
       setError(err instanceof Error ? err.message : 'Gagal memuat laporan transaksi manager')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleExport = async () => {
+    setExporting(true)
+    setError(null)
+
+    try {
+      const firstQuery = buildTransactionQuery({
+        page: 1,
+        limit: 100,
+        period,
+        startDate,
+        endDate,
+        method,
+        serviceType,
+        studioId,
+        locationId,
+      })
+
+      const firstRes = await apiFetch<{ data: ManagerTransactionsResponse }>(`/api/manager/transactions?${firstQuery.toString()}`)
+      const allRows = [...(firstRes.data.transactions || [])]
+
+      for (let nextPage = 2; nextPage <= firstRes.data.totalPages; nextPage += 1) {
+        const nextQuery = buildTransactionQuery({
+          page: nextPage,
+          limit: 100,
+          period,
+          startDate,
+          endDate,
+          method,
+          serviceType,
+          studioId,
+          locationId,
+        })
+        const nextRes = await apiFetch<{ data: ManagerTransactionsResponse }>(`/api/manager/transactions?${nextQuery.toString()}`)
+        allRows.push(...(nextRes.data.transactions || []))
+      }
+
+      if (!allRows.length) {
+        throw new Error('Tidak ada data transaksi untuk diexport')
+      }
+
+      const filename = `laporan-transaksi-manager-${period}-${startDate || 'awal'}_${endDate || 'akhir'}.csv`
+      downloadCsvFile(filename, allRows)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Gagal export laporan transaksi')
+    } finally {
+      setExporting(false)
     }
   }
 
@@ -199,7 +324,7 @@ export default function ManagerTransactionsPage() {
       {error ? <p className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}
 
       <Card title="Laporan Transaksi" subtitle="Detail transaksi harian/mingguan/bulanan + evaluasi per cabang">
-        <div className="grid gap-2 md:grid-cols-8">
+        <div className="grid gap-2 md:grid-cols-8 xl:grid-cols-9">
           <Select
             value={period}
             onChange={(event) => {
@@ -244,6 +369,9 @@ export default function ManagerTransactionsPage() {
           />
           <Button variant="secondary" onClick={() => void load(1)}>
             Terapkan
+          </Button>
+          <Button variant="ghost" loading={exporting} disabled={loading} onClick={() => void handleExport()}>
+            Export CSV
           </Button>
         </div>
       </Card>
